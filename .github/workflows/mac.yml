@@ -9,6 +9,9 @@ on:
       version:
         description: The launcher version being released (as in package.json)
         required: true
+      release_id:
+        description: The id of the draft release to add the Mac files to
+        required: true
 permissions:
   contents: write
 jobs:
@@ -23,8 +26,30 @@ jobs:
       - name: The version matches
         run: node -e "const v = require('./package.json').version; if (v !== process.argv[1]) { console.error('package.json is ' + v + ', not ' + process.argv[1]); process.exit(1) }" "${{ inputs.version }}"
       - run: npm ci || npm install
-      - name: Build and upload (dmg, zip, latest-mac.yml)
-        run: npx electron-builder --mac --publish always -c.directories.output=out
+      # Built without electron-builder's own publishing, then uploaded to the draft named by id: with
+      # more than one draft under a tag, electron-builder could pick another one.
+      - name: Build (dmg, zip, latest-mac.yml)
+        run: npx electron-builder --mac --publish never -c.directories.output=out
+        env:
+          CSC_IDENTITY_AUTO_DISCOVERY: "false"
+      - name: Upload to the draft release
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          CSC_IDENTITY_AUTO_DISCOVERY: "false"
+          RELEASE_ID: ${{ inputs.release_id }}
+          VERSION: ${{ inputs.version }}
+        run: |
+          set -euo pipefail
+          api="https://api.github.com/repos/${GITHUB_REPOSITORY}/releases/${RELEASE_ID}"
+          auth=(-H "Authorization: Bearer ${GH_TOKEN}" -H "Accept: application/vnd.github+json")
+          ls -la out
+          for f in out/Greyhaven-${VERSION}-mac.dmg out/Greyhaven-${VERSION}-mac.zip out/latest-mac.yml out/*.blockmap; do
+            [ -f "$f" ] || { echo "Missing $f"; [ "${f##*.}" = blockmap ] && continue; exit 1; }
+            name=$(basename "$f")
+            old=$(curl -fsS "${auth[@]}" "${api}/assets?per_page=100" | jq -r --arg n "$name" '.[] | select(.name == $n) | .id')
+            for id in $old; do curl -fsS -X DELETE "${auth[@]}" "https://api.github.com/repos/${GITHUB_REPOSITORY}/releases/assets/${id}"; done
+            echo "Uploading $name"
+            curl -fsS --retry 3 -X POST "${auth[@]}" -H "Content-Type: application/octet-stream" --data-binary @"$f" \
+              "https://uploads.github.com/repos/${GITHUB_REPOSITORY}/releases/${RELEASE_ID}/assets?name=${name}" > /dev/null
+          done
+          echo "The draft now holds:"
+          curl -fsS "${auth[@]}" "${api}/assets?per_page=100" | jq -r '.[].name'
