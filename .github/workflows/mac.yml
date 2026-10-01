@@ -1,0 +1,30 @@
+# The Mac launcher, built on GitHub's own Mac (a Mac app can only be built on a Mac). `npm run
+# release` on the Windows PC copies the launcher's files into this repository, uploads the Windows
+# installer to a draft release, and starts this with the version; this adds the Mac files to the
+# same draft, and npm run release then publishes it. The app is not signed by Apple (ad-hoc only).
+name: Mac launcher
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: The launcher version being released (as in package.json)
+        required: true
+permissions:
+  contents: write
+jobs:
+  mac:
+    runs-on: macos-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: The version matches
+        run: node -e "const v = require('./package.json').version; if (v !== process.argv[1]) { console.error('package.json is ' + v + ', not ' + process.argv[1]); process.exit(1) }" "${{ inputs.version }}"
+      - run: npm ci || npm install
+      - name: Build and upload (dmg, zip, latest-mac.yml)
+        run: npx electron-builder --mac --publish always -c.directories.output=out
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          CSC_IDENTITY_AUTO_DISCOVERY: "false"

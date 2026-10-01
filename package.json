@@ -1,0 +1,89 @@
+{
+  "name": "greyhaven-launcher",
+  "productName": "Greyhaven",
+  "version": "1.0.4",
+  "description": "The Greyhaven launcher: news, shard status and Play; keeps itself up to date.",
+  "author": "Greyhaven",
+  "private": true,
+  "main": "main.cjs",
+  "scripts": {
+    "start": "electron .",
+    "dist": "electron-builder --win --publish never",
+    "dist-mac": "electron-builder --mac --publish never",
+    "release": "node release.cjs",
+    "publish-release": "node publish-release.cjs"
+  },
+  "dependencies": {
+    "electron-updater": "^6.6.2"
+  },
+  "devDependencies": {
+    "electron": "^37.2.0",
+    "electron-builder": "^26.0.12"
+  },
+  "build": {
+    "appId": "gg.greyhaven.launcher",
+    "productName": "Greyhaven",
+    "files": [
+      "main.cjs",
+      "preload.cjs",
+      "shard.json",
+      "app/**",
+      "build/icon.png"
+    ],
+    "directories": {
+      "buildResources": "build",
+      "output": "C:/greyhaven-out"
+    },
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "icon": "build/icon.ico"
+    },
+    "mac": {
+      "target": [
+        {
+          "target": "dmg",
+          "arch": [
+            "universal"
+          ]
+        },
+        {
+          "target": "zip",
+          "arch": [
+            "universal"
+          ]
+        }
+      ],
+      "icon": "build/icon.png",
+      "category": "public.app-category.games",
+      "identity": "-",
+      "hardenedRuntime": false,
+      "artifactName": "Greyhaven-${version}-mac.${ext}"
+    },
+    "dmg": {
+      "title": "Greyhaven ${version}"
+    },
+    "nsis": {
+      "oneClick": true,
+      "perMachine": false,
+      "shortcutName": "Greyhaven",
+      "createDesktopShortcut": "always",
+      "createStartMenuShortcut": true,
+      "artifactName": "Greyhaven-Setup-${version}.${ext}"
+    },
+    "publish": [
+      {
+        "provider": "github",
+        "owner": "kvasily",
+        "repo": "greyhaven-launcher",
+        "releaseType": "draft"
+      }
+    ]
+  }
+}

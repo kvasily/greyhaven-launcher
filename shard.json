@@ -1,0 +1,5 @@
+{
+  "note": "The shard a fresh install connects to: your playit address (http://name.playit.gg:12345), or http://localhost:2593 on the shard's own computer. Players can't change it: a new address goes out by raising the version in package.json and releasing the launcher.",
+  "shard": "http://rails-designate.tun.ply.gg:3906",
+  "releases": "https://github.com/kvasily/greyhaven-launcher/releases/latest"
+}

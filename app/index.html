@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self'; script-src 'self'">
+  <title>Greyhaven</title>
+  <link rel="stylesheet" href="launcher.css">
+</head>
+<body>
+  <div class="scene" aria-hidden="true">
+    <svg class="skyline" viewBox="0 0 1600 420" preserveAspectRatio="xMidYMax slice">
+      <path class="far" d="M0 300 L120 250 L260 290 L400 220 L560 280 L700 230 L860 270 L1010 210 L1180 265 L1340 225 L1480 270 L1600 240 L1600 420 L0 420 Z"/>
+      <path class="near" d="M0 360 L90 330 L180 350 L240 318 L300 318 L300 290 L318 290 L318 278 L336 278 L336 290 L354 290 L354 278 L372 278 L372 290 L390 290 L390 318 L470 318 L540 340 L640 322 L760 350 L880 330 L960 344 L1040 300 L1060 300 L1060 262 L1080 262 L1080 248 L1100 248 L1100 262 L1120 262 L1120 300 L1140 300 L1220 336 L1340 320 L1460 348 L1600 330 L1600 420 L0 420 Z"/>
+    </svg>
+    <div class="embers"></div>
+  </div>
+
+  <main class="frame">
+    <header class="brand">
+      <img class="crest" src="icon.png" alt="">
+      <div>
+        <h1>Greyhaven</h1>
+        <p class="tagline">One world. Every road leads somewhere worth going.</p>
+      </div>
+    </header>
+
+    <section class="news" aria-labelledby="news-title">
+      <h2 id="news-title">News</h2>
+      <ol id="news" class="news-list"><li class="muted">Asking the shard…</li></ol>
+    </section>
+
+    <footer class="bar">
+      <div class="shard">
+        <div id="status" class="status" data-state="checking"><span class="dot"></span><span id="status-text">Looking for the shard…</span></div>
+        <p id="error" class="error" role="alert" hidden></p>
+      </div>
+      <div class="side">
+        <span id="version" class="version"></span>
+        <button id="play" class="play" type="button" disabled>Play</button>
+      </div>
+    </footer>
+  </main>
+  <script src="launcher.js"></script>
+</body>
+</html>
