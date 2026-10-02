@@ -10,6 +10,8 @@ if (location.protocol === 'file:') {
     restart: () => ipcRenderer.invoke('launcher:restart'),
     download: () => ipcRenderer.invoke('launcher:download'),
     check: () => ipcRenderer.invoke('launcher:check'),
+    skins: () => ipcRenderer.invoke('launcher:skins'),
+    pin: id => ipcRenderer.invoke('launcher:pin', id),
     onUpdate: listener => { ipcRenderer.on('launcher:update', (_event, update) => listener(update)) },
   })
 }
