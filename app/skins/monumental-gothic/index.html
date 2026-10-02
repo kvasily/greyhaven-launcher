@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self'; script-src 'self'">
+  <title>Greyhaven</title>
+  <link rel="stylesheet" href="launcher.css">
+  <link rel="stylesheet" href="../../shared/chooser.css">
+</head>
+<body>
+  <!-- The nave at night: ashlar wall, smoke, floor. Everything here is decoration. -->
+  <div class="nave" aria-hidden="true">
+    <div class="wall"></div>
+    <div class="smoke s1"></div>
+    <div class="smoke s2"></div>
+    <div class="floor"></div>
+  </div>
+
+  <div class="stage">
+    <!-- Ornamental frame: columns, gargoyles, lantern-bearers, arch and rose window, candles. -->
+    <div class="decor" aria-hidden="true">
+      <div class="column col-l"><span class="cap"></span><span class="shaft"></span><span class="base"></span></div>
+      <div class="column col-r"><span class="cap"></span><span class="shaft"></span><span class="base"></span></div>
+
+      <div class="gargoyle garg-l">
+        <span class="halo"></span>
+        <img class="layer body" src="art/gargoyle-left.png" alt="">
+        <img class="layer glow" src="art/gargoyle-left-glow.png" alt="">
+        <span class="ember"></span>
+      </div>
+      <div class="gargoyle garg-r">
+        <span class="halo"></span>
+        <img class="layer body" src="art/gargoyle-right.png" alt="">
+        <img class="layer glow" src="art/gargoyle-right-glow.png" alt="">
+        <span class="ember"></span>
+      </div>
+
+      <div class="crest">
+        <div class="rose">
+          <img class="layer img" src="art/rose-window.png" alt="">
+          <img class="layer glow" src="art/rose-window-glow.png" alt="">
+        </div>
+        <span class="rose-bloom"></span>
+        <img class="layer arch" src="art/arch-top.png" alt="">
+      </div>
+
+      <span class="spill spill-l"></span>
+      <span class="spill spill-r"></span>
+
+      <div class="bearer bearer-l">
+        <div class="flick">
+          <img class="layer rest" src="art/lantern-bearer-left.png" alt="">
+          <img class="layer lit" src="art/lantern-bearer-left-lit.png" alt="">
+          <img class="layer light" src="art/lantern-light-left.png" alt="">
+        </div>
+      </div>
+      <div class="bearer bearer-r">
+        <div class="flick">
+          <img class="layer rest" src="art/lantern-bearer-right.png" alt="">
+          <img class="layer lit" src="art/lantern-bearer-right-lit.png" alt="">
+          <img class="layer light" src="art/lantern-light-right.png" alt="">
+        </div>
+      </div>
+
+      <div class="candle c1"><img class="body" src="art/candle.png" alt=""><span class="halo"></span><img class="flame" src="art/candle-flame.png" alt=""></div>
+      <div class="candle c2"><img class="body" src="art/candle.png" alt=""><span class="halo"></span><img class="flame" src="art/candle-flame.png" alt=""></div>
+      <div class="candle c3"><img class="body" src="art/candle.png" alt=""><span class="halo"></span><img class="flame" src="art/candle-flame.png" alt=""></div>
+      <div class="candle c4"><img class="body" src="art/candle.png" alt=""><span class="halo"></span><img class="flame" src="art/candle-flame.png" alt=""></div>
+    </div>
+
+    <main class="shrine">
+      <header class="brand">
+        <h1 class="wordmark"><img src="art/wordmark.png" alt="Greyhaven"></h1>
+        <p class="tagline">One world. Every road leads somewhere worth going.</p>
+      </header>
+
+      <div class="reliquary">
+        <span class="frame" aria-hidden="true"></span>
+        <section class="news" aria-labelledby="news-title">
+          <h2 id="news-title" class="cartouche title"><span>Tidings</span></h2>
+          <div class="news-scroll">
+            <ol id="news" class="news-list"><li class="muted">Asking the shard…</li></ol>
+          </div>
+          <p id="error" class="error" role="alert" hidden></p>
+        </section>
+        <div class="shard cartouche">
+          <div id="status" class="status" data-state="checking"><span class="dot"></span><span id="status-text">Looking for the shard…</span></div>
+        </div>
+      </div>
+
+      <footer class="altar">
+        <button id="play" class="play" type="button" disabled>Play</button>
+        <span id="version" class="version"></span>
+      </footer>
+    </main>
+  </div>
+
+  <script src="mock.js"></script>
+  <script src="launcher.js"></script>
+  <script src="../../shared/chooser.js"></script>
+</body>
+</html>

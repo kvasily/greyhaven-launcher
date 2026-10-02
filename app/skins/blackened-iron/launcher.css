@@ -1,0 +1,191 @@
+/* Greyhaven launcher — Blackened Iron.
+   A heavy ARPG front screen: a painted walled hill-town under a smoky ember night; the Chronicle in an
+   ornate iron window (Set A frame, titlebar plaque, crest); Play as a big forged plate.
+   Art: art/ (Set A pieces copied from the shared UI set; scene/fog/embers/gems by scripts/). */
+
+@font-face { font-family: "Lora"; src: url(fonts/Lora-Variable.ttf) format("truetype"); font-weight: 400 700; font-style: normal; }
+@font-face { font-family: "Lora"; src: url(fonts/Lora-Italic-Variable.ttf) format("truetype"); font-weight: 400 700; font-style: italic; }
+
+:root {
+  --void: #070605; --panel: #100d0b; --iron: #2a2622; --iron-hi: #4d473f; --bronze: #5e4526;
+  --gold: #a8854a; --gold-hi: #d4b277; --ember: #b4501e; --danger: #8e1b14;
+  --ink: #e4dac2; --ink-2: #cfc4aa; --muted: #a0967f; --faint: #8f8572;
+  --serif: "Palatino Linotype", "Book Antiqua", Palatino, "Lora", Baskerville, Georgia, serif;
+  --label: "Bahnschrift SemiCondensed", Bahnschrift, "Segoe UI", "DejaVu Sans Condensed", sans-serif;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html, body { height: 100%; margin: 0; }
+body { background: var(--void); color: var(--ink); font: 15px/1.55 var(--serif); overflow: hidden; user-select: none; }
+button { font: inherit; }
+
+/* ------------------------------------------------------------------ the night */
+.scene { position: fixed; inset: 0; overflow: hidden; background: var(--void); }
+.sky, .lights { position: absolute; inset: 0; background: url(art/scene.jpg) 50% 62% / cover no-repeat; transition: filter 2.5s ease, opacity 2.5s ease; }
+.lights { background-image: url(art/scene-lights.jpg); mix-blend-mode: screen; animation: smoulder 7s ease-in-out infinite alternate; }
+@keyframes smoulder { from { opacity: .86; } to { opacity: 1; } }
+
+.embers { position: absolute; inset: 0; transition: opacity 2.5s ease;
+  -webkit-mask-image: radial-gradient(ellipse 34% 52% at 36% 60%, #000 25%, transparent 78%);
+          mask-image: radial-gradient(ellipse 34% 52% at 36% 60%, #000 25%, transparent 78%); }
+.embers i { position: absolute; left: 0; right: 0; top: 0; height: calc(100% + 512px); background: url(art/embers.png) 0 0 / 512px repeat; animation: rise 52s linear infinite; will-change: transform; }
+.embers i + i { height: calc(100% + 384px); background-size: 384px; background-position: 190px 70px; opacity: .55; animation: rise-small 76s linear infinite; }
+@keyframes rise { to { transform: translate3d(-40px, -512px, 0); } }
+@keyframes rise-small { to { transform: translate3d(30px, -384px, 0); } }
+
+.fog { position: absolute; left: 0; bottom: 12vh; height: 30vh; width: 320vh; background: url(art/fog.png) 0 0 / auto 100% repeat-x; opacity: 1; animation: drift 240s linear infinite; will-change: transform; transition: opacity 2.5s ease; }
+@keyframes drift { to { transform: translate3d(-160vh, 0, 0); } }
+
+.vignette { position: absolute; inset: 0;
+  background:
+    linear-gradient(0deg, #050404e6 0%, #05040466 11%, transparent 24%),
+    linear-gradient(90deg, transparent 52%, #05040480 80%, #050404b3 100%),
+    radial-gradient(ellipse 80% 78% at 38% 46%, transparent 45%, #000000b0 100%); }
+
+/* The shard is down: the town goes dark, the embers die, the sky turns cold. */
+body:has(.status[data-state="offline"]) .lights { opacity: .05; animation: none; }
+body:has(.status[data-state="offline"]) .embers { opacity: 0; }
+body:has(.status[data-state="offline"]) .sky { filter: saturate(.35) brightness(.72); }
+body:has(.status[data-state="offline"]) .crest { filter: grayscale(.9) brightness(.6) drop-shadow(0 4px 6px #000c); }
+body:has(.status[data-state="offline"]) .pane, body:has(.status[data-state="offline"]) .plaque { filter: saturate(.3) brightness(.85) drop-shadow(0 24px 30px #000d); }
+body:has(.status[data-state="checking"]) .lights { opacity: .45; animation: none; }
+body:has(.status[data-state="checking"]) .embers { opacity: .35; }
+
+/* ------------------------------------------------------------------ layout */
+.stage { position: relative; height: 100%; overflow: hidden; display: grid;
+  grid-template-columns: minmax(0, 1fr) clamp(380px, 36.5vw, 470px); grid-template-rows: minmax(0, 1fr) auto;
+  column-gap: 44px; row-gap: 16px; padding: 30px 38px 28px 44px; }
+
+/* ------------------------------------------------------------------ title */
+.brand { grid-column: 1; grid-row: 1; align-self: start; justify-self: start; display: flex; flex-direction: column; align-items: center; padding-top: 6px; }
+.wordmark { margin: 0; line-height: 0; }
+.wordmark img { display: block; width: min(560px, 46vw); height: auto; filter: drop-shadow(0 6px 16px #000) drop-shadow(0 0 30px #0009); }
+.rule { position: relative; width: 78%; height: 24px; margin: 12px 0 4px; border-style: solid; border-width: 0 64px; border-image: url(art/divider.png) 0 128 fill / 0 64px stretch; }
+.rule::after, .news-list li + li::after { content: ""; position: absolute; left: 50%; top: 0; width: 48px; height: 24px; margin-left: -24px; background: url(art/divider-center.png) center / 48px 24px no-repeat; }
+.tagline { margin: 0; font-style: italic; font-size: 17px; letter-spacing: .02em; color: #c4b796; text-shadow: 0 2px 10px #000, 0 0 2px #000; }
+
+/* ------------------------------------------------------------------ the Chronicle window */
+.chronicle { grid-column: 2; grid-row: 1; position: relative; min-height: 0; display: flex; flex-direction: column; padding-top: 70px; }
+.crest { position: absolute; z-index: 3; top: 4px; left: 50%; width: 144px; height: 72px; margin-left: -72px; background: url(art/crest-top.png) center / contain no-repeat; filter: drop-shadow(0 4px 6px #000c); transition: filter 2.5s ease; }
+.plaque { position: absolute; z-index: 2; top: 60px; left: 50%; transform: translateX(-50%); width: 316px; height: 66px; margin: 0;
+  border-style: solid; border-width: 0 92px; border-image: url(art/titlebar.png) 0 224 fill / 0 92px stretch;
+  font: 600 14px/66px var(--serif); letter-spacing: .34em; text-indent: .34em; text-transform: uppercase; text-align: center; white-space: nowrap;
+  color: var(--gold-hi); text-shadow: 0 1px 0 #000, 0 0 10px #000; filter: drop-shadow(0 6px 8px #000b); }
+.pane { transition: filter 2.5s ease; flex: 1; min-height: 0; display: flex; flex-direction: column;
+  border-style: solid; border-width: 40px; border-image: url(art/frame.png) 128 / 64px round;
+  background: radial-gradient(ellipse 75% 70% at 50% 42%, #00000000 35%, #000000a6 100%), url(art/bg-leather-tooled.png) 0 0 / 256px;
+  background-clip: padding-box; box-shadow: inset 0 0 40px 8px #000c;
+  padding: 44px 10px 18px 22px; filter: drop-shadow(0 24px 30px #000d); }
+
+.news-list { flex: 1; min-height: 0; overflow-y: auto; list-style: none; margin: 0; padding: 0 12px 20px 0; scrollbar-gutter: stable;
+  -webkit-mask-image: linear-gradient(180deg, #000 calc(100% - 26px), #0000); mask-image: linear-gradient(180deg, #000 calc(100% - 26px), #0000); }
+/* nothing but a message (offline, or no news): set it in the middle of the page between two rules */
+.news-list:has(> li.muted:only-child) { display: flex; flex-direction: column; justify-content: center; padding-bottom: 40px; }
+.news-list li.muted:only-child::before, .news-list li.muted:only-child::after { content: ""; display: block; height: 24px; margin: 0 auto 18px; width: 70%; position: relative;
+  border-style: solid; border-width: 0 64px; border-image: url(art/divider.png) 0 128 fill / 0 64px stretch; opacity: .6; }
+.news-list li.muted:only-child::after { margin: 18px auto 0; }
+.news-list li { position: relative; padding: 2px 4px; }
+.news-list li + li { margin-top: 10px; padding-top: 38px; }
+.news-list li + li::before { content: ""; position: absolute; top: 0; left: 0; right: 0; height: 24px; border-style: solid; border-width: 0 64px; border-image: url(art/divider.png) 0 128 fill / 0 64px stretch; opacity: .9; }
+.news-list time { display: block; font: 600 11.5px/1.3 var(--label); letter-spacing: .18em; text-transform: uppercase; color: var(--faint); }
+.news-list b { display: block; margin: 3px 0 5px; font-weight: 600; font-size: 18px; line-height: 1.3; color: #dcc08a; text-shadow: 0 1px 0 #000; }
+.news-list p { margin: 0; color: var(--ink-2); user-select: text; }
+.news-list li.muted { padding: 30px 14px; text-align: center; font-style: italic; font-size: 16px; color: var(--muted); }
+
+.news-list:focus-visible { outline: 1px solid #a8854a99; outline-offset: 6px; }
+.news-list::-webkit-scrollbar { width: 10px; }
+.news-list::-webkit-scrollbar-track { background: #0806059c; border-left: 1px solid #00000080; box-shadow: inset 2px 0 4px #000; }
+.news-list::-webkit-scrollbar-thumb { background: linear-gradient(90deg, #3a342d, #4d473f 40%, #2a2622); border: 1px solid #000; border-radius: 2px; box-shadow: inset 0 1px 0 #a8854a55; }
+.news-list::-webkit-scrollbar-thumb:hover { background: linear-gradient(90deg, #4a4239, #6b645a 40%, #3a3631); }
+
+/* ------------------------------------------------------------------ bottom-left: error strip, status plaque, version */
+.bar { grid-column: 1; grid-row: 1 / span 2; align-self: end; display: flex; flex-direction: column; align-items: flex-start; gap: 10px; min-width: 0; }
+
+.status { display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: center; column-gap: 14px; min-height: 66px; max-width: 100%;
+  margin-left: 18px; padding: 4px 26px 4px 0;
+  border-style: solid; border-width: 10px 10px 10px 0; border-image: url(art/tooltip-frame.png) 64 / 16px stretch;
+  background: linear-gradient(180deg, #ffffff08, #0000004d), url(art/bg-stone.png) 0 0 / 256px; background-origin: border-box;
+  box-shadow: 0 10px 24px #000b; font-size: 16px; color: var(--ink); }
+.status .dot { position: relative; width: 52px; height: 52px; margin-left: -26px; grid-row: 1 / span 2; background: url(art/gem-dead.png) center / contain no-repeat; filter: drop-shadow(0 3px 4px #000); }
+.status .dot::before { content: ""; position: absolute; inset: -18px; border-radius: 50%; background: radial-gradient(closest-side, #ff7a3a66, #b4501e33 45%, transparent); opacity: 0; transition: opacity 1.2s ease; }
+.status .dot::after { content: ""; position: absolute; inset: 0; background: url(art/gem-lit.png) center / contain no-repeat; opacity: 0; transition: opacity 1.2s ease; }
+#status-text { grid-column: 2; align-self: end; line-height: 1.3; padding-top: 2px; text-shadow: 0 1px 0 #000; }
+.status:not([data-state="offline"]) #status-text { grid-row: 1 / span 2; align-self: center; padding: 0; }
+.status[data-state="online"] .dot::after { opacity: 1; }
+.status[data-state="online"] .dot::before { opacity: 1; animation: breathe 5s ease-in-out infinite alternate; }
+.status[data-state="checking"] .dot::after { animation: seek 2.6s ease-in-out infinite; }
+.status[data-state="checking"] #status-text { color: var(--ink-2); }
+.status[data-state="offline"] #status-text { color: #d9b4a4; }
+.status[data-state="offline"]::after { content: "The gates are shut and the town is dark."; grid-column: 2; align-self: start; font-size: 13.5px; font-style: italic; line-height: 1.3; color: var(--muted); padding-bottom: 2px; }
+@keyframes breathe { from { opacity: .55; } to { opacity: 1; } }
+@keyframes seek { 0%, 100% { opacity: .08; } 50% { opacity: .7; } }
+
+.version { margin-left: 20px; padding: 2px 4px; font: 12px/1.3 var(--label); letter-spacing: .08em; color: var(--faint); cursor: pointer; text-shadow: 0 1px 2px #000; }
+.version:hover { color: var(--gold-hi); }
+
+.error { max-width: min(660px, 100%); margin: 0 0 2px 0; padding: 4px 20px 4px 44px; position: relative;
+  border-style: solid; border-width: 7px 8px; border-image: url(art/tooltip-frame.png) 64 / 16px stretch;
+  background: linear-gradient(90deg, #8e1b1480, #8e1b1400 40%), linear-gradient(#0000004d, #00000073), url(art/bg-parchment-dark.png) 0 0 / 256px; background-origin: border-box;
+  box-shadow: 0 8px 20px #000a; font-size: 14.5px; line-height: 1.4; color: #f1e6cf; text-shadow: 0 1px 1px #000; }
+.error::before { content: ""; position: absolute; left: 4px; top: 50%; width: 32px; height: 16px; margin-top: -8px; background: url(art/divider-center.png) center / contain no-repeat; }
+.error[data-kind="notice"] { background-image: linear-gradient(90deg, #a8854a4d, #a8854a00 40%), linear-gradient(#0000004d, #00000073), url(art/bg-parchment-dark.png); }
+.error[data-kind="notice"]::before { filter: hue-rotate(28deg) saturate(.8) brightness(1.2); }
+
+/* ------------------------------------------------------------------ Play */
+.action { grid-column: 2; grid-row: 2; position: relative; display: flex; justify-content: center; align-items: flex-end; padding: 0 6px; }
+.action::before { content: ""; position: absolute; left: -40px; right: -40px; top: -34px; bottom: -34px; pointer-events: none;
+  background: radial-gradient(closest-side, #ff7a3a70, #b4501e40 50%, transparent); opacity: .3; transition: opacity .4s ease; }
+.action:has(.play[data-mode="play"]:not(:disabled))::before { animation: beckon-soft 4.5s ease-in-out infinite alternate; }
+.action:has(.play:hover:not(:disabled))::before, .action:has(.play:focus-visible)::before { opacity: 1; animation: none; }
+@keyframes beckon-soft { from { opacity: .22; } to { opacity: .5; } }
+.action:has(.play:disabled:not([data-busy]))::before { opacity: 0; }
+.action:has(.play[data-mode="update"])::before, .action:has(.play[data-mode="download"])::before { background: radial-gradient(closest-side, #e6c98a55, #a8854a30 50%, transparent); opacity: 1; animation: beckon 3.2s ease-in-out infinite alternate; }
+@keyframes beckon { from { opacity: .45; } to { opacity: 1; } }
+
+.play { position: relative; isolation: isolate; width: 100%; max-width: 420px; height: 76px; padding: 0; overflow: hidden;
+  border-style: solid; border-width: 0 48px; border-image: url(art/button-normal.png) 0 48 fill / 0 48px stretch; background: none;
+  font: 600 26px/1 var(--serif); letter-spacing: .36em; text-indent: .36em; text-transform: uppercase; white-space: nowrap;
+  color: #e8cd92; text-shadow: 0 1px 0 #000, 0 0 16px #b4501e66; cursor: pointer; }
+.play:hover:not(:disabled) { border-image-source: url(art/button-hover.png); color: #f6dfa8; text-shadow: 0 1px 0 #000, 0 0 18px #ff7a3aa6; }
+.play:active:not(:disabled) { border-image-source: url(art/button-pressed.png); padding-top: 3px; color: #d9bb80; }
+.play:focus-visible { outline: 2px solid var(--gold-hi); outline-offset: 5px; }
+
+/* update modes: the plate is re-gilded */
+.play[data-mode="update"], .play[data-mode="download"] { border-image-source: url(art/button-gilt.png); color: #f3dca4; text-shadow: 0 1px 0 #000, 0 0 14px #e6c98a55; }
+.play[data-mode="download"] { font-size: 21px; letter-spacing: .2em; text-indent: .2em; }
+.play[data-mode="update"]:hover:not(:disabled), .play[data-mode="download"]:hover:not(:disabled) { border-image-source: url(art/button-gilt-hover.png); color: #fff0c8; text-shadow: 0 1px 0 #000, 0 0 18px #e6c98a99; }
+
+/* dead iron: nothing to do yet */
+.play:disabled { border-image-source: url(art/button-dead.png); color: #6f685d; text-shadow: 0 1px 0 #000; cursor: default; }
+/* working, not dead: updating fills with embers; checking/loading smoulders */
+.play[data-busy] { border-image-source: url(art/button-normal.png); color: #cdb27c; font-size: 21px; letter-spacing: .24em; text-indent: .24em; }
+.play[data-busy="wait"] { animation: wait 2.4s ease-in-out infinite; }
+.play::after { content: ""; position: absolute; z-index: -1; left: -38px; top: 11px; bottom: 11px; width: calc((100% + 76px) * var(--p, 0)); opacity: 0;
+  background: linear-gradient(180deg, #ff9a4a40, #b4501e8c 45%, #5a1f0aa6); box-shadow: 4px 0 10px -2px #ff8a3a99; mix-blend-mode: screen; transition: width .6s ease, opacity .4s ease; }
+.play[data-busy="progress"]::after { opacity: 1; }
+/* hover: embers light the face from below */
+.play:hover:not(:disabled):not([data-busy])::after { opacity: 1; width: auto; right: -38px; box-shadow: none; background: radial-gradient(ellipse 60% 120% at 50% 110%, #ff7a3a4d, #b4501e1a 60%, transparent); }
+@keyframes wait { 50% { color: #8f7d5c; } }
+
+/* ------------------------------------------------------------------ smaller windows (down to 960x600) */
+@media (max-width: 1120px), (max-height: 720px) {
+  .stage { grid-template-columns: minmax(0, 1fr) 372px; column-gap: 28px; row-gap: 12px; padding: 20px 26px 20px 30px; }
+  .wordmark img { width: min(420px, 44vw); }
+  .rule { margin-top: 8px; }
+  .tagline { font-size: 15px; }
+  .chronicle { padding-top: 64px; }
+  .crest { width: 132px; height: 66px; margin-left: -66px; top: 2px; }
+  .plaque { top: 54px; width: 290px; height: 60px; line-height: 60px; border-image-width: 0 84px; border-width: 0 84px; font-size: 13px; }
+  .pane { padding-top: 38px; }
+  .news-list b { font-size: 17px; }
+  .play { height: 66px; font-size: 23px; }
+  .play[data-mode="download"], .play[data-busy] { font-size: 19px; }
+  .status { min-height: 58px; font-size: 15px; }
+  .status .dot { width: 46px; height: 46px; margin-left: -23px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+  .embers { display: none; }
+}

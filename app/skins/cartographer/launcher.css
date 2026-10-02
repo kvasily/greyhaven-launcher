@@ -1,0 +1,308 @@
+/* Greyhaven launcher — "The Cartographer's Table".
+   A hand-inked map of the reach on old vellum, laid on a dark table and lit by a candle.
+   Everything on the sheet is placed in map units (u = 1/1280 of the stage), so the town marker,
+   the cartouche and the notes stay where the map was drawn at any window size. */
+
+@font-face { font-family: "LoraLocal"; src: url(fonts/Lora-Variable.ttf) format("truetype"); font-weight: 400 700; font-style: normal; }
+@font-face { font-family: "LoraLocal"; src: url(fonts/Lora-Italic-Variable.ttf) format("truetype"); font-weight: 400 700; font-style: italic; }
+
+:root {
+  --serif: "Palatino Linotype", "Book Antiqua", Palatino, "LoraLocal", Georgia, serif;
+  --num: "Bahnschrift SemiCondensed", Bahnschrift, "Segoe UI", system-ui, sans-serif;
+  --ink: #1c140c;          /* iron-gall ink */
+  --ink-2: #3a2c1e;        /* faded ink, still >= 7:1 on the notes */
+  --red-ink: #7c1d12;
+  --vellum: #d6c49d;
+  --wax-text: #f7e2c2;
+  --table-text: #cdb990;
+  /* the stage keeps the map's 16:10 shape and fits the window */
+  --sw: min(100vw, 160vh);
+  --u: calc(var(--sw) / 1280);
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html, body { height: 100%; margin: 0; }
+body {
+  background: #0a0604 url(art/table.jpg) repeat;
+  color: var(--ink); font: 15px/1.45 var(--serif);
+  overflow: hidden; user-select: none;
+}
+button { font: inherit; }
+
+/* ------------------------------------------------------------------ the table and the sheet */
+.stage {
+  position: absolute; left: 50%; top: 50%;
+  width: var(--sw); height: calc(var(--sw) * 0.625);
+  transform: translate(-50%, -50%);
+  overflow: hidden;
+  box-shadow: 0 0 0 100vmax #0a060466;   /* deepen the table beyond the lamp's reach */
+}
+.map {
+  position: absolute; inset: 0;
+  background: url(art/map.jpg) 0 0 / 100% 100% no-repeat;
+  transition: filter 1.4s ease;
+}
+
+/* A charcoal fog: a faint drift at the edges always; it rolls over the whole reach when the shard is down. */
+.fog { position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
+.fog i {
+  position: absolute; top: 0; left: 0; width: 200%; height: 100%;
+  background: url(art/fog.png) 0 0 / 50% 100% repeat-x;
+  animation: drift 160s linear infinite;
+}
+.fog-edge {
+  opacity: .45; mix-blend-mode: multiply;
+  -webkit-mask-image: radial-gradient(64% 70% at 44% 50%, transparent 62%, #000 100%);
+          mask-image: radial-gradient(64% 70% at 44% 50%, transparent 62%, #000 100%);
+}
+.fog-full {
+  opacity: 0; transition: opacity 1.4s ease;
+  /* the fog parts round the title, so the name of the world stays legible */
+  -webkit-mask-image: radial-gradient(25% 17% at 27% 18%, transparent 60%, #000 100%);
+          mask-image: radial-gradient(25% 17% at 27% 18%, transparent 60%, #000 100%);
+}
+.fog-full i:nth-child(2) { top: 8%; opacity: .7; animation-duration: 230s; animation-direction: reverse; background-size: 50% 90%; }
+@keyframes drift { to { transform: translateX(-50%); } }
+
+/* The candle's light breathing on the sheet (the pool itself is painted into the map). */
+.candle-light {
+  position: absolute; pointer-events: none;
+  left: calc(var(--u) * -245); top: calc(var(--u) * 331);
+  width: calc(var(--u) * 600); height: calc(var(--u) * 600);
+  background: radial-gradient(closest-side, #ffb35c38, #ff9a3c14 55%, transparent);
+  mix-blend-mode: screen;
+  animation: breathe 4.3s ease-in-out infinite alternate;
+}
+@keyframes breathe { 0% { opacity: .75; } 40% { opacity: 1; } 55% { opacity: .85; } 100% { opacity: .95; } }
+
+.candle {
+  position: absolute; left: calc(var(--u) * 6); bottom: calc(var(--u) * -46);
+  width: calc(var(--u) * 96); height: calc(var(--u) * 256);
+  background: url(art/candle.png) 0 0 / 100% 100% no-repeat;
+  filter: drop-shadow(calc(var(--u) * 10) calc(var(--u) * -4) calc(var(--u) * 8) #0009);
+  pointer-events: none;
+}
+.candle::before {   /* the flame's halo */
+  content: ""; position: absolute; left: -60%; top: -32%; width: 220%; height: 100%;
+  background: radial-gradient(closest-side at 50% 50%, #ffd28a55, #ffa04a1f 45%, transparent 75%);
+  mix-blend-mode: screen;
+  animation: breathe 2.7s ease-in-out infinite alternate;
+}
+.candle .flame {
+  position: absolute; inset: 0;
+  background: url(art/candle-flame.png) 0 0 / 100% 100% no-repeat;
+  transform-origin: 48% 30%;
+  animation: flicker 3.1s ease-in-out infinite;
+}
+@keyframes flicker {
+  0%, 100% { transform: scale(1, 1) rotate(0deg); opacity: 1; }
+  23% { transform: scale(.97, 1.04) rotate(-1.2deg); opacity: .94; }
+  41% { transform: scale(1.02, .97) rotate(.8deg); opacity: 1; }
+  67% { transform: scale(.98, 1.03) rotate(-.4deg); opacity: .9; }
+  83% { transform: scale(1.01, .99) rotate(1deg); opacity: .97; }
+}
+
+/* night: everything on the table (notes included) sinks toward the edges */
+.stage::after {
+  content: ""; position: absolute; inset: 0; pointer-events: none; z-index: 5;
+  background: radial-gradient(120% 115% at 42% 42%, transparent 55%, #1a0d0540 78%, #0a0402a6 100%);
+}
+
+/* ------------------------------------------------------------------ the title cartouche (drawn in the map) */
+.brand {
+  position: absolute; left: calc(var(--u) * 100); top: calc(var(--u) * 74);
+  width: calc(var(--u) * 490); height: calc(var(--u) * 140);
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: calc(var(--u) * 6); padding-top: calc(var(--u) * 4);
+}
+.wordmark { margin: 0; line-height: 0; }
+.wordmark img {
+  display: block; height: calc(var(--u) * 64); width: auto; max-width: calc(var(--u) * 400);
+  object-fit: contain;
+}
+.tagline {
+  margin: 0; color: var(--ink); font-style: italic;
+  font-size: max(14px, calc(var(--u) * 17)); letter-spacing: .02em;
+}
+
+/* ------------------------------------------------------------------ Greyhaven on the map: the shard's status */
+.status {
+  position: absolute; left: calc(var(--u) * 468); top: calc(var(--u) * 452);
+  width: 0; height: 0;
+}
+#status-text {
+  position: absolute; left: calc(var(--u) * 44); top: 0; transform: translateY(-50%);
+  white-space: nowrap;
+  font-style: italic; font-weight: 600; font-size: max(15px, calc(var(--u) * 18));
+  color: var(--ink);
+  padding: 6px 16px; margin-left: -16px;
+  background: radial-gradient(closest-side, #d9c8a1e0 62%, #d9c8a100);
+  text-shadow: 0 0 2px #dccba3, 0 0 6px #dccba3;
+  transition: color .8s ease;
+}
+/* the dot is the mark on the map: a red-ink ring round the town, a pennant on the keep */
+.dot { position: absolute; left: 0; top: 0; }
+.dot::before {   /* ring */
+  content: ""; position: absolute;
+  left: calc(var(--u) * -64); top: calc(var(--u) * -58);
+  width: calc(var(--u) * 127); height: calc(var(--u) * 100);
+  background: url(art/ring.png) 0 0 / 100% 100% no-repeat;
+  opacity: 0; transition: opacity .6s ease;
+}
+.dot::after {    /* pennant on the keep's bare flagpole */
+  content: ""; position: absolute;
+  left: calc(var(--u) * 2.3); top: calc(var(--u) * -39);
+  width: calc(var(--u) * 30); height: calc(var(--u) * 20);
+  background: url(art/pennant.png) 0 0 / 100% 100% no-repeat;
+  transform-origin: 4% 10%;
+  opacity: 0; transform: scaleX(.2); transition: opacity .5s ease, transform .9s cubic-bezier(.2, .7, .1, 1);
+}
+.status::before {  /* the lamp lit in the town */
+  content: ""; position: absolute;
+  left: calc(var(--u) * -80); top: calc(var(--u) * -88);
+  width: calc(var(--u) * 160); height: calc(var(--u) * 160);
+  background: radial-gradient(closest-side, #ffcf7a66, #ffb15a26 50%, transparent);
+  mix-blend-mode: screen; pointer-events: none;
+  opacity: 0; transition: opacity 1.2s ease;
+}
+.status::after {   /* struck through when the shard is down */
+  content: ""; position: absolute;
+  left: calc(var(--u) * -46); top: calc(var(--u) * -50);
+  width: calc(var(--u) * 96); height: calc(var(--u) * 77);
+  background: url(art/strike.png) 0 0 / 100% 100% no-repeat;
+  opacity: 0; transform: scale(1.15); transition: opacity .5s ease .15s, transform .5s ease .15s;
+}
+
+.status[data-state="online"] .dot::before { opacity: 1; }
+.status[data-state="online"] .dot::after { opacity: 1; transform: none; animation: flutter 2.8s ease-in-out 1s infinite alternate; }
+.status[data-state="online"]::before { opacity: 1; animation: lamp 3.7s ease-in-out infinite alternate; }
+@keyframes flutter { 0% { transform: skewY(0deg) scaleX(1); } 50% { transform: skewY(-4deg) scaleX(.95); } 100% { transform: skewY(2deg) scaleX(.98); } }
+@keyframes lamp { 0% { opacity: .8; } 45% { opacity: 1; } 70% { opacity: .88; } 100% { opacity: .96; } }
+
+.status[data-state="checking"] .dot::before { animation: seek 1.8s ease-in-out infinite; }
+@keyframes seek { 0% { opacity: .15; transform: scale(.82); } 50% { opacity: .95; transform: scale(1.04); } 100% { opacity: .15; transform: scale(.82); } }
+
+.status[data-state="offline"]::after { opacity: 1; transform: none; }
+.status[data-state="offline"] #status-text { color: var(--red-ink); text-shadow: 0 0 2px #d9c8a0, 0 0 5px #d9c8a0, 0 0 10px #d9c8a0cc; }
+.stage:has(.status[data-state="offline"]) .map { filter: grayscale(.55) brightness(.8) contrast(.96); }
+.stage:has(.status[data-state="offline"]) .fog-full { opacity: .78; }
+.stage:has(.status[data-state="offline"]) .candle-light { opacity: .5; animation: none; }
+
+/* ------------------------------------------------------------------ news: notes pinned to the map */
+.news {
+  position: absolute; right: calc(var(--u) * 62); top: calc(var(--u) * 56);
+  bottom: calc(var(--u) * 140 + 22px);
+  width: max(272px, calc(var(--u) * 318));
+  display: flex; flex-direction: column; min-height: 0;
+}
+.news h2 {
+  align-self: flex-start; margin: 0 0 4px calc(var(--u) * 4);
+  padding: 9px 18px 8px;
+  border: 0 solid transparent; border-image: url(art/note-b.png) 42 fill / 14px stretch;
+  margin-left: 6px; transform: rotate(-1.6deg);
+  font: 600 13px/1.2 var(--num); letter-spacing: .16em; text-transform: uppercase; color: var(--ink);
+  filter: drop-shadow(0 2px 3px #0007);
+}
+
+.error {
+  margin: 4px 6px 6px; padding: 12px 16px 12px 46px; position: relative;
+  border: 0 solid transparent; border-image: url(art/note-a.png) 42 fill / 18px stretch;
+  color: var(--ink); font-size: 14.5px; line-height: 1.4;
+  filter: drop-shadow(0 3px 4px #0008);
+  transform: rotate(.5deg);
+}
+.error::before {   /* a red-ink nota bene */
+  content: "!"; position: absolute; left: 14px; top: 50%; transform: translateY(-50%);
+  width: 22px; height: 22px; border-radius: 50%; border: 1.5px solid var(--red-ink);
+  display: grid; place-items: center;
+  font: 700 14px/1 var(--serif); color: var(--red-ink);
+}
+.error[data-kind="notice"] { color: var(--ink); }
+.error:not([data-kind="notice"]) { color: var(--red-ink); font-weight: 600; }
+
+.news-list {
+  list-style: none; margin: 0; padding: 6px 10px 20px 6px;
+  -webkit-mask-image: linear-gradient(#000 0, #000 calc(100% - 20px), transparent);
+          mask-image: linear-gradient(#000 0, #000 calc(100% - 20px), transparent);
+  flex: 1 1 auto; min-height: 0; overflow-y: auto; overflow-x: hidden;
+  display: flex; flex-direction: column; gap: 12px;
+  scrollbar-width: thin; scrollbar-color: #6b5236 transparent;
+}
+.news-list::-webkit-scrollbar { width: 8px; }
+.news-list::-webkit-scrollbar-track { background: #1a100833; border-radius: 4px; }
+.news-list::-webkit-scrollbar-thumb { background: #6b5236; border-radius: 4px; border: 2px solid transparent; background-clip: padding-box; }
+.news-list::-webkit-scrollbar-thumb:hover { background-color: #8a6a44; }
+
+.news-list li {
+  position: relative; flex: none;
+  padding: 15px 18px 13px;
+  border: 0 solid transparent; border-image: url(art/note-a.png) 42 fill / 26px stretch;
+  filter: drop-shadow(0 3px 4px #0009);
+  transform: rotate(-.6deg);
+}
+.news-list li:nth-child(even) { border-image-source: url(art/note-b.png); transform: rotate(.7deg); margin-left: 4px; }
+.news-list li:nth-child(3n) { transform: rotate(-.2deg); margin-left: 2px; }
+.news-list li::before {   /* the pin */
+  content: ""; position: absolute; left: 50%; top: -5px; width: 26px; height: 26px; margin-left: -13px;
+  background: url(art/pin.png) 0 0 / 100% 100% no-repeat;
+}
+.news-list li:nth-child(even)::before { left: 42%; }
+.news-list time {
+  display: block; color: var(--ink-2);
+  font: 600 12.5px/1.2 var(--num); letter-spacing: .14em; text-transform: uppercase;
+}
+.news-list time::after { content: ""; display: block; width: 34px; margin-top: 5px; border-top: 1px solid #3a2c1e88; }
+.news-list b { display: block; margin: 6px 0 3px; font-size: 16.5px; font-weight: 700; line-height: 1.25; color: var(--ink); }
+.news-list p { margin: 0; font-size: 14.5px; line-height: 1.45; color: #2a2016; user-select: text; }
+.news-list li.muted { color: var(--ink-2); font-style: italic; padding: 16px 18px; }
+.muted { color: var(--ink-2); }
+
+/* ------------------------------------------------------------------ Play: a slab of red sealing wax */
+.bar { position: static; }
+.play {
+  position: absolute; right: calc(var(--u) * 64); bottom: calc(var(--u) * 70);
+  min-width: max(220px, calc(var(--u) * 252)); height: max(50px, calc(var(--u) * 60));
+  padding: 0 44px 2px;
+  background: none; border: 0 solid transparent;
+  border-image: url(art/wax.png) 0 66 fill / 0 44px stretch;
+  color: var(--wax-text);
+  font: 700 19px/1 var(--serif); letter-spacing: .22em; text-transform: uppercase;
+  text-shadow: 0 -1px 0 #2a0402, 0 1px 0 #ff9b7a40;
+  filter: drop-shadow(0 5px 6px #000a) drop-shadow(0 1px 1px #0008);
+  cursor: pointer;
+  transition: filter .35s ease, transform .15s ease;
+}
+.play:hover:not(:disabled) {
+  filter: brightness(1.16) saturate(1.12) drop-shadow(0 0 14px #ff7a3a70) drop-shadow(0 5px 6px #000a);
+}
+.play:active:not(:disabled) { transform: translateY(1px) scale(.992); }
+.play:focus-visible { outline: 2px dashed #f3d9a8; outline-offset: 5px; }
+.play[data-mode="update"], .play[data-mode="download"] { letter-spacing: .14em; }
+/* an update waiting: the dispatch has come in under seal */
+.play[data-mode="update"] { padding-left: 64px; }
+.play[data-mode="update"]::before {
+  content: ""; position: absolute; left: -30px; top: 50%; width: 82px; height: 82px; margin-top: -42px;
+  background: url(art/seal-wax.png) 0 0 / 100% 100% no-repeat;
+  transform: rotate(-9deg);
+  filter: drop-shadow(0 3px 4px #000b);
+}
+/* not yet: the slab is not poured; a docket slip stamped in faded ink */
+.play:disabled {
+  border-image-source: url(art/slip.png);
+  color: var(--ink); text-shadow: none; letter-spacing: .14em; font-weight: 600;
+  filter: drop-shadow(0 3px 3px #0009);
+  cursor: default;
+}
+
+.version {
+  position: absolute; right: calc(var(--u) * 66); bottom: calc(var(--u) * 16);
+  font: 13.5px/1.2 var(--num); letter-spacing: .05em; color: var(--table-text);
+  cursor: pointer; text-shadow: 0 1px 2px #000;
+}
+.version:hover { color: #ecd9ae; text-decoration: underline; text-decoration-color: #ecd9ae66; text-underline-offset: 3px; }
+.version:focus-visible { outline: 2px dashed #ecd9ae; outline-offset: 3px; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition-duration: .01ms !important; }
+}

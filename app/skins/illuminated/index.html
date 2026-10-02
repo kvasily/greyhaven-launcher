@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self'; script-src 'self'">
+  <title>Greyhaven</title>
+  <link rel="stylesheet" href="launcher.css">
+  <link rel="stylesheet" href="../../shared/chooser.css">
+</head>
+<body>
+  <!-- The lectern, and the candle just out of frame to the left. -->
+  <div class="scene" aria-hidden="true"><div class="candlelight"></div></div>
+
+  <main class="book">
+    <div class="book-art" aria-hidden="true"></div>
+    <div class="pagelight" aria-hidden="true"></div>
+
+    <!-- Verso: the title page. -->
+    <section class="verso">
+      <header class="brand">
+        <h1 class="wordmark"><img src="art/wordmark.png" alt="Greyhaven"><img class="gilt" src="art/wordmark.png" alt="" aria-hidden="true"></h1>
+        <p class="tagline">One world. Every road leads somewhere worth going.</p>
+        <div class="rule" aria-hidden="true"></div>
+      </header>
+
+      <div class="shard">
+        <p class="caption" aria-hidden="true">Set down this hour</p>
+        <div id="status" class="status" data-state="checking"><span class="dot"></span><span id="status-text">Looking for the shard…</span></div>
+        <p id="error" class="error" role="alert" hidden></p>
+      </div>
+
+      <footer class="colophon">
+        <span id="version" class="version"></span>
+      </footer>
+    </section>
+
+    <!-- Recto: the chronicle itself. -->
+    <section class="recto news" aria-labelledby="news-title">
+      <h2 id="news-title">The Chronicle</h2>
+      <ol id="news" class="news-list"><li class="muted">Asking the shard…</li></ol>
+    </section>
+
+    <!-- The bookmark ribbon and its gilt tab: Play. -->
+    <div class="bookmark">
+      <span class="ribbon" aria-hidden="true"></span>
+      <button id="play" class="play" type="button" disabled>Play</button>
+    </div>
+  </main>
+
+  <script src="mock.js"></script>
+  <script src="launcher.js"></script>
+  <script src="../../shared/chooser.js"></script>
+</body>
+</html>

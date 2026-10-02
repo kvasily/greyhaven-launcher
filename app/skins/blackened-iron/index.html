@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self'; script-src 'self'">
+  <title>Greyhaven</title>
+  <link rel="stylesheet" href="launcher.css">
+  <link rel="stylesheet" href="../../shared/chooser.css">
+</head>
+<body>
+  <!-- The night over Greyhaven: a painted hill-town; its lights go out when the shard is down. -->
+  <div class="scene" aria-hidden="true">
+    <div class="sky"></div>
+    <div class="lights"></div>
+    <div class="embers"><i></i><i></i></div>
+    <div class="fog"></div>
+    <div class="vignette"></div>
+  </div>
+
+  <main class="stage">
+    <header class="brand">
+      <h1 class="wordmark"><img src="art/wordmark.png" alt="Greyhaven"></h1>
+      <div class="rule" aria-hidden="true"></div>
+      <p class="tagline">One world. Every road leads somewhere worth going.</p>
+    </header>
+
+    <section class="chronicle" aria-labelledby="news-title">
+      <div class="heading" aria-hidden="true"><span class="crest"></span></div>
+      <h2 id="news-title" class="plaque">Chronicle</h2>
+      <div class="pane">
+        <ol id="news" class="news-list"><li class="muted">Asking the shard…</li></ol>
+      </div>
+    </section>
+
+    <footer class="bar">
+      <p id="error" class="error" role="alert" hidden></p>
+      <div id="status" class="status" data-state="checking"><span class="dot"></span><span id="status-text">Looking for the shard…</span></div>
+      <span id="version" class="version"></span>
+    </footer>
+
+    <div class="action">
+      <button id="play" class="play" type="button" disabled>Play</button>
+    </div>
+  </main>
+  <script src="mock.js"></script>
+  <script src="launcher.js"></script>
+  <script src="../../shared/chooser.js"></script>
+  <script src="skin.js"></script>
+</body>
+</html>

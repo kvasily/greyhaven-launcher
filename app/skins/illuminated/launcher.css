@@ -1,0 +1,209 @@
+/* Greyhaven launcher — "The Illuminated Chronicle".
+   An open chronicle on a dark lectern by candlelight. The book is one raster (art/book.webp,
+   2400x1500 art px) scaled to fit; the text blocks are placed in percentages of it. */
+
+@font-face { font-family: "Lora Chronicle"; src: url(fonts/Lora-Variable.ttf) format("truetype"); font-weight: 400 700; font-style: normal; }
+@font-face { font-family: "Lora Chronicle"; src: url(fonts/Lora-Italic-Variable.ttf) format("truetype"); font-weight: 400 700; font-style: italic; }
+
+:root {
+  --serif: "Palatino Linotype", "Book Antiqua", Palatino, "Lora Chronicle", Georgia, serif;
+  --label: "Bahnschrift SemiCondensed", Bahnschrift, "Segoe UI", sans-serif;
+  --ink: #2a1b10;        /* iron-gall ink on vellum: >= 8:1 on the darkest page tone */
+  --ink-soft: #4a3424;
+  --rubric: #9a2414;     /* vermilion rubrics on the candle-lit verso (>= 5:1) */
+  --rubric-deep: #80180c; /* rubrics on the dimmer recto (>= 4.9:1) */
+  --lapis: #1f3c86;
+  --gilt: #f3d58c;
+  --bg: #0b0806;
+  color-scheme: light;
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html, body { height: 100%; margin: 0; }
+body { background: var(--bg); color: var(--ink); font: 16px/1.5 var(--serif); overflow: hidden; user-select: none; }
+button { font: inherit; }
+
+/* ------------------------------------------------------------------ the lectern & candle */
+.scene { position: fixed; inset: 0; background: var(--bg) url(art/lectern.webp) center / cover no-repeat; }
+.candlelight, .pagelight { position: absolute; inset: 0; pointer-events: none; will-change: opacity; }
+.candlelight {
+  background: radial-gradient(ellipse 55% 75% at -4% 40%, #ffb45a3a, #ff9a4014 45%, transparent 75%);
+  mix-blend-mode: screen; animation: flicker 5.3s ease-in-out infinite;
+}
+/* On the pages the candle is a warm wash from the left that breathes a little. */
+.pagelight {
+  z-index: 1;
+  background: radial-gradient(ellipse 70% 95% at -6% 32%, #ffcf8a2e, #ffb46010 50%, transparent 78%),
+              linear-gradient(90deg, transparent 40%, #2a120014 100%);
+  mix-blend-mode: multiply; opacity: .9;
+  animation: flicker 5.3s ease-in-out infinite;
+}
+.pagelight::after {
+  content: ""; position: absolute; inset: 0;
+  background: radial-gradient(ellipse 55% 80% at 0% 30%, #fff1d018, transparent 70%);
+  mix-blend-mode: screen;
+}
+@keyframes flicker {
+  0% { opacity: .86 } 7% { opacity: .97 } 12% { opacity: .82 } 19% { opacity: 1 } 26% { opacity: .9 }
+  33% { opacity: .97 } 41% { opacity: .84 } 48% { opacity: .94 } 57% { opacity: 1 } 63% { opacity: .88 }
+  71% { opacity: .96 } 78% { opacity: .85 } 86% { opacity: 1 } 93% { opacity: .91 } 100% { opacity: .86 }
+}
+@keyframes gutter {
+  0% { opacity: .55 } 9% { opacity: .3 } 13% { opacity: .6 } 30% { opacity: .5 } 34% { opacity: .18 }
+  38% { opacity: .5 } 61% { opacity: .42 } 66% { opacity: .58 } 80% { opacity: .25 } 86% { opacity: .5 } 100% { opacity: .55 }
+}
+
+/* ------------------------------------------------------------------ the book */
+.book {
+  --bh: min(calc(100vh - 12px - 82px), calc((100vw - 40px) / 1.6));
+  position: absolute; left: 50%; top: max(12px, calc((100vh - var(--bh) - 82px) / 2));
+  width: calc(var(--bh) * 1.6); height: var(--bh); margin-left: calc(var(--bh) * -.8);
+  container-type: size;
+}
+.book-art { position: absolute; inset: 0; background: url(art/book.webp) center / 100% 100% no-repeat; transition: filter 1.2s ease; }
+.verso, .recto { position: absolute; z-index: 2; }
+
+/* ---- verso: title page, inside the illuminated bar border (art px 318..1064 x 236..1226) */
+.verso {
+  left: 13.25%; top: 15.7%; width: 31.1%; height: 66%;
+  display: flex; flex-direction: column; align-items: center; text-align: center;
+}
+.brand { width: 100%; display: flex; flex-direction: column; align-items: center; margin-top: 3.5cqh; }
+.wordmark { position: relative; margin: 0; width: 100%; line-height: 0; }
+.wordmark img { display: block; width: 100%; height: auto; max-height: 110px; object-fit: contain; }
+/* the slow gilt glint over the initial: a brightened copy of the wordmark, clipped to its left fifth
+   and revealed through a moving gradient mask (gradients need no fetch, so this works from file://) */
+.wordmark .gilt {
+  position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none;
+  filter: brightness(1.55) saturate(1.15); clip-path: inset(0 81.4% 0 0);
+  -webkit-mask: linear-gradient(115deg, transparent 40%, #000 50%, transparent 60%) 100% 0 / 60% 100% no-repeat;
+  mask: linear-gradient(115deg, transparent 40%, #000 50%, transparent 60%) 100% 0 / 60% 100% no-repeat;
+  animation: shimmer 11s ease-in-out infinite;
+}
+@keyframes shimmer { 0%, 70% { -webkit-mask-position: -95% 0; mask-position: -95% 0 } 100% { -webkit-mask-position: -5% 0; mask-position: -5% 0 } }
+
+.tagline {
+  margin: clamp(10px, 2.2cqh, 18px) 0 0; max-width: 30ch;
+  color: var(--rubric); font-style: italic; font-size: clamp(15px, 1.45cqw, 18px); line-height: 1.35;
+}
+.rule { width: 74%; aspect-ratio: 640 / 60; margin-top: clamp(6px, 1.6cqh, 14px); background: url(art/rule.png) center / contain no-repeat; }
+
+.shard { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; min-height: 0; width: 100%; }
+.caption {
+  margin: 0; color: var(--rubric); font-variant: small-caps; text-transform: lowercase;
+  font-size: clamp(14px, 1.3cqw, 16px); letter-spacing: .16em; font-weight: 600;
+}
+.status { display: block; text-align: center; max-width: 100%; text-wrap: balance; font-size: clamp(16px, 1.75cqw, 22px); font-style: italic; line-height: 1.3; color: var(--ink); transition: color 1.2s ease, opacity 1.2s ease; }
+.dot { display: inline-block; width: .78em; height: .78em; margin-right: .45em; vertical-align: -.04em; background: url(art/mark-gilt.png) center / contain no-repeat; filter: drop-shadow(0 0 0 transparent); }
+.status[data-state="online"] .dot { filter: drop-shadow(0 0 4px #ffd27a99); }
+.status[data-state="checking"] .dot { animation: pulse 1.4s ease-in-out infinite; }
+.status[data-state="offline"] .dot { background-image: url(art/mark-ink.png); }
+@keyframes pulse { 50% { opacity: .3; } }
+
+/* the marginal note: red "Nota" for errors, a gilt mark for notices */
+.error {
+  margin: 4px 0 0; max-width: 34ch; font-size: clamp(14px, 1.3cqw, 15.5px); font-style: italic; line-height: 1.4;
+  color: #8a1d10; user-select: text;
+}
+.error::before { content: "Nota. "; font-style: normal; font-variant: small-caps; text-transform: lowercase; letter-spacing: .08em; font-weight: 700; }
+.error[data-kind="notice"] { color: var(--ink-soft); }
+.error[data-kind="notice"]::before { content: ""; display: inline-block; width: .7em; height: .7em; margin-right: .45em; background: url(art/mark-gilt.png) center / contain no-repeat; vertical-align: -.02em; }
+
+.colophon { padding-top: 6px; }
+.version {
+  cursor: pointer; font-size: 14px; font-style: italic; color: #5c4532; letter-spacing: .02em;
+  border-bottom: 1px solid transparent; transition: color .2s, border-color .2s;
+}
+.version:hover { color: var(--rubric); border-bottom-color: #9a241455; }
+
+/* ---- recto: the chronicle (art px 1318..2112 x 150..1300) */
+.recto { left: 54.9%; top: 9.6%; width: 33.1%; height: 77.4%; display: flex; flex-direction: column; }
+.recto h2 {
+  margin: 0 0 clamp(8px, 1.8cqh, 16px); text-align: center; color: var(--rubric-deep);
+  font-size: clamp(15px, 1.45cqw, 18px); font-weight: 600; font-variant: small-caps; text-transform: lowercase; letter-spacing: .24em;
+  display: flex; align-items: center; justify-content: center; gap: .7em;
+}
+.recto h2::before, .recto h2::after { content: ""; width: .7em; height: .7em; background: url(art/mark-gilt.png) center / contain no-repeat; }
+.news-list {
+  list-style: none; margin: 0; padding: 0 10px 0 0; flex: 1; min-height: 0; overflow-y: auto; overscroll-behavior: contain;
+  scrollbar-width: thin; scrollbar-color: #7a553599 transparent;
+  padding-bottom: 26px;
+  -webkit-mask: linear-gradient(#000 calc(100% - 30px), transparent); mask: linear-gradient(#000 calc(100% - 30px), transparent);
+}
+.news-list::-webkit-scrollbar { width: 8px; }
+.news-list::-webkit-scrollbar-track { background: transparent; }
+.news-list::-webkit-scrollbar-thumb { background: #7a553588; border-radius: 4px; border: 2px solid transparent; background-clip: padding-box; }
+.news-list::-webkit-scrollbar-thumb:hover { background-color: #9a241477; }
+.news-list li { position: relative; padding-left: 1.35em; margin-bottom: clamp(12px, 2.4cqh, 22px); }
+.news-list li:last-child { margin-bottom: 4px; }
+.news-list li::before { content: "¶"; position: absolute; left: 0; top: -.02em; font-size: 1.45em; line-height: 1; color: var(--rubric-deep); font-weight: 700; }
+.news-list li:nth-child(even)::before { color: var(--lapis); }
+.news-list time {
+  display: block; color: var(--rubric-deep); font-variant: small-caps; font-weight: 600; letter-spacing: .1em;
+  font-size: clamp(15px, 1.35cqw, 16px); line-height: 1.3;
+}
+.news-list b { display: block; margin: 2px 0 4px; font-size: clamp(17px, 1.7cqw, 20px); font-weight: 700; line-height: 1.25; color: var(--ink); }
+.news-list b::first-letter { color: var(--lapis); }
+.news-list li:nth-child(even) b::first-letter { color: var(--rubric-deep); }
+.news-list p { margin: 0; font-size: clamp(15px, 1.42cqw, 17px); line-height: 1.55; color: var(--ink); user-select: text; hyphens: auto; }
+.news-list li.muted { padding: 0; text-align: center; font-style: italic; color: #6a5440; }
+.news-list li.muted::before { content: none; }
+
+/* ------------------------------------------------------------------ the bookmark: Play */
+.bookmark {
+  position: absolute; z-index: 3; left: 72.2%; top: 90.6%; transform: translateX(-50%);
+  display: flex; flex-direction: column; align-items: center;
+}
+.ribbon { display: block; width: 52px; height: 66px; background: url(art/ribbon.png) center bottom / 52px 84px no-repeat; transition: filter .6s ease; }
+.play {
+  position: relative; margin-top: -16px; height: 62px; min-width: 250px; padding: 0 30px 4px;
+  border: solid transparent; border-width: 0 34px;
+  border-image: url(art/plaque.png) 0 120 fill / 0 60px stretch;
+  background: none; color: var(--gilt); cursor: pointer;
+  font: 700 21px/1 var(--serif); letter-spacing: .26em; text-transform: uppercase; text-indent: .26em; white-space: nowrap;
+  text-shadow: 0 -1px 0 #0b1430cc, 0 1px 0 #ffffff1f, 0 0 12px #f3c76a40;
+  filter: drop-shadow(0 6px 10px #0009);
+  transition: filter .25s ease, color .25s ease, transform .12s ease;
+}
+.play::after {
+  content: ""; position: absolute; inset: 12px -10px 14px; border-radius: 3px; pointer-events: none; mix-blend-mode: screen; opacity: 0;
+  background: linear-gradient(105deg, transparent 35%, #ffe9b066 50%, transparent 65%) 100% 0 / 300% 100% no-repeat;
+}
+.play:hover:not(:disabled) { color: #fff0c2; filter: drop-shadow(0 6px 12px #0009) drop-shadow(0 0 14px #ffc96a55) brightness(1.12) saturate(1.08); }
+.play:hover:not(:disabled)::after { opacity: 1; animation: glint 1.6s ease-out 1 forwards; }
+@keyframes glint { from { background-position: 100% 0 } to { background-position: 0% 0 } }
+.play:active:not(:disabled) { transform: translateY(1px); filter: drop-shadow(0 3px 6px #0009) brightness(.97); }
+.play:focus-visible { outline: 2px solid #ffe08f; outline-offset: 4px; border-radius: 12px; }
+.play:disabled {
+  cursor: default; color: #a9adb3; border-image-source: url(art/plaque-dull.png);
+  text-shadow: 0 -1px 0 #0008; filter: drop-shadow(0 4px 8px #0008);
+}
+.bookmark:has(.play:disabled) .ribbon { filter: brightness(.62) saturate(.55); }
+.play[data-mode="update"], .play[data-mode="download"] { font-size: 18px; letter-spacing: .14em; text-indent: .14em; padding-left: 44px; }
+/* the update states carry a red wax seal on the tab */
+.play[data-mode="update"]::before, .play[data-mode="download"]::before {
+  content: ""; position: absolute; left: -58px; top: 50%; width: 74px; height: 74px; transform: translateY(-50%) rotate(-10deg);
+  background: url(art/seal-intact.png) center / contain no-repeat; filter: drop-shadow(0 3px 4px #000a);
+}
+.play[data-mode="update"]:disabled::before { background-image: url(art/seal-cracked.png); }
+.play[data-mode="download"]::before { background-image: url(art/seal-wax.png); width: 66px; height: 66px; left: -52px; }
+
+/* ------------------------------------------------------------------ offline: the ink fades */
+body:has(#status[data-state="offline"]) .book-art { filter: brightness(.82) saturate(.6) sepia(.14); }
+body:has(#status[data-state="offline"]) .scene { filter: brightness(.7) saturate(.8); }
+.scene { transition: filter 1.2s ease; }
+body:has(#status[data-state="offline"]) .wordmark img { filter: grayscale(.55) sepia(.25) opacity(.62); transition: filter 1.2s ease; }
+/* rubrics lose their vermilion (faded, still >= 4.5:1); the ornament dims */
+body:has(#status[data-state="offline"]) .tagline,
+body:has(#status[data-state="offline"]) .caption { color: #6a3628; }
+body:has(#status[data-state="offline"]) .rule { opacity: .5; filter: saturate(.4); }
+body:has(#status[data-state="offline"]) .status { color: #4a1e14; }
+body:has(#status[data-state="offline"]) .recto h2 { color: #5e3226; }
+body:has(#status[data-state="offline"]) .recto h2::before, body:has(#status[data-state="offline"]) .recto h2::after { opacity: .5; }
+body:has(#status[data-state="offline"]) .news-list li.muted { color: #3a2a1d; margin-top: 30%; font-size: clamp(16px, 1.55cqw, 19px); }
+body:has(#status[data-state="offline"]) .pagelight,
+body:has(#status[data-state="offline"]) .candlelight { animation: gutter 3.7s ease-in-out infinite; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, ::before, ::after { animation: none !important; transition: none !important; }
+}

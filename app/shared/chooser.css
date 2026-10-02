@@ -1,0 +1,38 @@
+/* The launcher-art gear and its list (chooser.js). Neutral smoked glass and old gold, so it sits on
+   any of the five designs; above everything they draw. */
+.gh-chooser-gear {
+  position: fixed; top: 14px; right: 14px; z-index: 1000;
+  width: 34px; height: 34px; padding: 6px; border-radius: 50%;
+  border: 1px solid rgba(214, 186, 128, .45); background: rgba(12, 11, 10, .55);
+  color: rgba(226, 206, 160, .85); cursor: pointer;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, .45);
+  transition: color .15s, background .15s, transform .3s;
+}
+.gh-chooser-gear svg { width: 100%; height: 100%; display: block; fill: none; stroke: currentColor; stroke-width: 1.4; stroke-linejoin: round; }
+.gh-chooser-gear:hover, .gh-chooser-gear[aria-expanded="true"] { color: #f1dca6; background: rgba(12, 11, 10, .8); transform: rotate(30deg); }
+.gh-chooser-gear:focus-visible, .gh-chooser-option:focus-visible { outline: 2px solid #e8c878; outline-offset: 2px; }
+.gh-chooser {
+  position: fixed; top: 56px; right: 14px; z-index: 1000; width: min(560px, calc(100vw - 28px));
+  max-height: calc(100vh - 80px); overflow: auto; box-sizing: border-box;
+  padding: 16px 18px 18px; border: 1px solid rgba(214, 186, 128, .4); border-radius: 6px;
+  background: rgba(14, 13, 12, .94); color: #e6dcc6; box-shadow: 0 12px 40px rgba(0, 0, 0, .6);
+  font: 14px/1.4 "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif;
+}
+.gh-chooser[hidden] { display: none; }
+.gh-chooser h2 { margin: 0 0 2px; font-size: 15px; letter-spacing: .14em; text-transform: uppercase; color: #e8c878; font-weight: 600; }
+.gh-chooser > p { margin: 0 0 12px; color: #b8ac94; font-size: 13px; }
+.gh-chooser .gh-chooser-preview { margin: 10px 0 0; font-style: italic; }
+.gh-chooser-list { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.gh-chooser-option {
+  display: flex; flex-direction: column; align-items: stretch; gap: 4px; padding: 6px; margin: 0;
+  border: 1px solid rgba(214, 186, 128, .22); border-radius: 4px; background: rgba(255, 255, 255, .03);
+  color: inherit; font: inherit; text-align: left; cursor: pointer;
+}
+.gh-chooser-option:hover { border-color: rgba(214, 186, 128, .55); background: rgba(255, 255, 255, .06); }
+.gh-chooser-option[aria-pressed="true"] { border-color: #e8c878; box-shadow: inset 0 0 0 1px #e8c878; background: rgba(232, 200, 120, .08); }
+.gh-chooser-option img, .gh-chooser-rotate { width: 100%; aspect-ratio: 16 / 10; border-radius: 2px; display: block; object-fit: cover; background: #1d1b18; }
+.gh-chooser-rotate { display: grid; place-items: center; font-size: 34px; color: #e8c878; }
+.gh-chooser-name { font-size: 13px; font-weight: 600; }
+.gh-chooser-option small { font-size: 11px; color: #a89c84; min-height: 1.3em; }
+.gh-chooser-option[aria-pressed="true"] .gh-chooser-name::after { content: " · chosen"; color: #e8c878; font-weight: 400; }
+@media (prefers-reduced-motion: reduce) { .gh-chooser-gear { transition: none; } .gh-chooser-gear:hover { transform: none; } }

@@ -1,0 +1,199 @@
+/* Greyhaven launcher — Wayworn skin (Set C).
+   Ancient, dangerous, tactile, restrained: a charcoal-study dusk, a traveller waiting at the road,
+   notices posted at a waystone, and a dark-iron plate with an ember in it. */
+
+@font-face { font-family: "Lora"; src: url("fonts/Lora-Variable.ttf") format("truetype"); font-weight: 400 700; font-style: normal; }
+@font-face { font-family: "Lora"; src: url("fonts/Lora-Italic-Variable.ttf") format("truetype"); font-weight: 400 700; font-style: italic; }
+
+:root {
+  --charcoal: #121110; --soot: #1b1a18; --iron: #2b2a27; --iron-hi: #4a4741;
+  --bronze: #5c5236; --burgundy: #4a1a1c;
+  --parchment: #b9ab8a; --bone: #cfc4a8; --warm: #a39d90; --ash: #8a847a; --ash-dim: #77726a;
+  --ink: #241d15; --ink-soft: #3d3326;
+  --ember: 206, 118, 52; --amber: 176, 138, 46;
+  --serif: "Palatino Linotype", "Book Antiqua", Palatino, "Lora", Georgia, serif;
+  --label: "Bahnschrift SemiCondensed", Bahnschrift, "Segoe UI", "DejaVu Sans Condensed", sans-serif;
+  --col: clamp(316px, 31.5vw, 408px);
+  --breathe-up: 220ms; --breathe-down: 1600ms;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html, body { height: 100%; margin: 0; }
+body { background: var(--charcoal); color: var(--bone); font: 15px/1.5 var(--serif); overflow: hidden; user-select: none; }
+button { font: inherit; }
+
+/* ------------------------------------------------------------------ the world (behind everything) */
+/* A fixed-aspect box (the painting is 16:10) that always covers the window, so the fire in the
+   door and the fog stay where they were painted. */
+.world { position: fixed; left: 50%; top: 50%; width: max(100vw, 160vh); height: max(100vh, 62.5vw); transform: translate(-50%, -50%); overflow: hidden; }
+.paint { position: absolute; inset: 0; background: center / 100% 100% no-repeat; transition: opacity 1.4s ease; }
+.paint-lit { background-image: url("art/world.jpg"); }
+.paint-cold { background-image: url("art/world-cold.jpg"); opacity: 0; }
+/* the fire in the cathedral's west door (painted dimly; this layer lets it live) */
+.door-fire { position: absolute; left: 39.17%; top: 56%; width: 8%; height: 10%; transform: translate(-50%, -50%);
+  --fire: radial-gradient(closest-side, rgba(var(--ember), .46), rgba(var(--ember), .14) 55%, transparent);
+  mix-blend-mode: screen; transition: opacity 1.4s ease; }
+.door-fire::before { content: ""; position: absolute; inset: 0; background: var(--fire); animation: fire 5.2s ease-in-out infinite alternate; }
+@keyframes fire { 0% { opacity: .65; } 30% { opacity: 1; } 55% { opacity: .78; } 80% { opacity: .95; } 100% { opacity: .7; } }
+
+.fog { position: absolute; left: 0; width: 200%; pointer-events: none; will-change: transform; animation: fog 180s linear infinite alternate; }
+.fog-far { top: 50%; height: 16%;
+  background: radial-gradient(28% 50% at 18% 50%, rgba(116, 106, 100, .10), transparent 70%),
+              radial-gradient(22% 40% at 47% 60%, rgba(116, 106, 100, .08), transparent 70%),
+              radial-gradient(30% 50% at 78% 45%, rgba(116, 106, 100, .09), transparent 70%); }
+@keyframes fog { to { transform: translateX(-50%); } }
+
+/* drifting ash: a seamless tile moved by exactly one period, so the loop never jumps */
+.ash { position: absolute; top: -512px; left: 0; right: -512px; bottom: 0; background: url("art/ash.png") 0 0 / 512px 512px repeat; will-change: transform; pointer-events: none; }
+.ash-far { opacity: .7; background-size: 320px 320px; top: -320px; right: -320px; animation: ash-far 96s linear infinite; }
+@keyframes ash-far { to { transform: translate(-320px, 320px); } }
+.ash-near { animation: ash-near 64s linear infinite; opacity: 1; }
+@keyframes ash-near { to { transform: translate(-512px, 512px); } }
+
+/* ------------------------------------------------------------------ the traveller */
+.hero { position: fixed; z-index: 1; left: clamp(8px, 4.5vw, 72px); bottom: -3vh; height: 84vh; width: auto; pointer-events: none;
+  filter: drop-shadow(18px 0 40px rgba(0, 0, 0, .55)); transition: filter 1.4s ease; }
+
+/* a cold haze behind the traveller, so he stands in the air rather than on it */
+.world::after { content: ""; position: absolute; inset: 0; pointer-events: none;
+  background: radial-gradient(16vw 40vh at calc(50% - 50vw + clamp(8px, 4.5vw, 72px) + 9vw) 58%, rgba(120, 124, 134, .085), transparent 75%); }
+.foreground { position: fixed; inset: 0; z-index: 2; pointer-events: none; overflow: hidden; }
+.fog-near { bottom: -4%; height: 26%;
+  background: radial-gradient(26% 46% at 14% 70%, rgba(92, 86, 82, .16), transparent 72%),
+              radial-gradient(30% 40% at 40% 60%, rgba(92, 86, 82, .10), transparent 72%),
+              radial-gradient(26% 50% at 66% 66%, rgba(92, 86, 82, .13), transparent 72%),
+              radial-gradient(30% 46% at 90% 60%, rgba(92, 86, 82, .10), transparent 72%);
+  animation-duration: 140s; animation-direction: alternate-reverse; }
+.smudge { position: absolute; inset: 0; background: url("art/smudge.png") center / 100% 100% no-repeat; mix-blend-mode: multiply; opacity: .85; }
+.smudge::after { content: ""; position: absolute; inset: 0; background: radial-gradient(120% 95% at 42% 46%, transparent 55%, rgba(6, 6, 6, .55)); }
+
+/* ------------------------------------------------------------------ layout */
+.frame { position: relative; z-index: 3; height: 100%; }
+.ui { transition: opacity var(--breathe-up) ease-out; }
+html[data-presence="low"] .ui { opacity: .66; transition-duration: var(--breathe-down); }
+html[data-presence="low"] .brand.ui { opacity: .5; }
+
+.brand { position: absolute; left: clamp(28px, 3.6vw, 48px); top: clamp(22px, 4.4vh, 38px); }
+.wordmark { margin: 0; line-height: 0; }
+.wordmark img { height: clamp(46px, 8.2vh, 70px); width: auto; filter: drop-shadow(0 3px 10px rgba(0, 0, 0, .8)); }
+.tagline { margin: 8px 0 0 3px; color: var(--warm); font-style: italic; font-size: 15px; letter-spacing: .01em; text-shadow: 0 1px 8px #000; }
+
+.waystone { position: absolute; top: clamp(22px, 4.4vh, 38px); bottom: clamp(16px, 3vh, 26px); right: clamp(20px, 3.4vw, 44px); width: var(--col);
+  display: flex; flex-direction: column; gap: 14px; }
+
+/* ------------------------------------------------------------------ notices (soot, a thin iron edge) */
+.news { flex: 0 1 auto; min-height: 0; display: flex; flex-direction: column; position: relative;
+  border: 16px solid transparent; border-image: url("art/placard-edge.png") 32 / 16px stretch;
+  background: linear-gradient(180deg, rgba(27, 26, 24, .55), rgba(18, 17, 16, .35)), url("art/soot.png") 0 0 / 256px 256px;
+  background-clip: padding-box; box-shadow: 0 18px 50px rgba(0, 0, 0, .55); }
+.news::before { /* a faint lantern from above-left, so the page reads as handled, not printed */
+  content: ""; position: absolute; inset: -6px; pointer-events: none;
+  background: radial-gradient(90% 55% at 20% 0%, rgba(207, 196, 168, .055), transparent 70%); }
+.news h2 { position: relative; margin: 2px 6px 0; padding: 0 0 10px; font: 600 15px/1.2 var(--serif); font-variant: small-caps; letter-spacing: .16em; color: var(--bone);
+  border-bottom: 1px solid rgba(207, 196, 168, .10); display: flex; align-items: baseline; gap: 10px; }
+.news h2 .sub { font: italic 400 13px var(--serif); font-variant: normal; letter-spacing: .01em; color: var(--ash); }
+.news-list { position: relative; list-style: none; margin: 0; padding: 4px 10px 14px 6px; overflow: auto; min-height: 0; flex: 1 1 auto; }
+.news-list::-webkit-scrollbar { width: 8px; }
+.news-list::-webkit-scrollbar-track { background: rgba(0, 0, 0, .25); border-radius: 4px; }
+.news-list::-webkit-scrollbar-thumb { background: linear-gradient(90deg, #4a4740, #67625a 50%, #46433d); border-radius: 4px; border: 1px solid #1a1918; }
+.news-list li { padding: 13px 0 14px; }
+.news-list { mask-image: linear-gradient(180deg, #000 calc(100% - 18px), transparent); }
+.news-list li + li { border-top: 1px solid transparent; border-image: linear-gradient(90deg, transparent, rgba(163, 157, 144, .20) 20%, rgba(163, 157, 144, .20) 80%, transparent) 1; }
+.news-list time { display: block; font: 600 11.5px/1 var(--label); letter-spacing: .16em; text-transform: uppercase; color: var(--ash); }
+.news-list b { display: block; margin: 6px 0 4px; font: 600 17px/1.25 var(--serif); font-variant: small-caps; letter-spacing: .045em; color: var(--bone); }
+.news-list li:first-child:not(.muted) b { font-size: 19px; }
+.news-list p { margin: 0; font-size: 15px; line-height: 1.5; color: var(--warm); user-select: text; }
+.news-list li.muted { color: var(--warm); font-style: italic; padding-top: 16px; }
+
+/* ------------------------------------------------------------------ the gate: notice, status, Play */
+.gate { flex: none; margin-top: auto; display: flex; flex-direction: column; gap: 10px; }
+
+/* a torn vellum scrap, pinned: the quest-note treatment for a message from the shard */
+.error { position: relative; margin: 0 2px 2px; padding: 0 6px 0 8px; color: var(--ink); font: 15px/1.42 var(--serif); user-select: text;
+  border: 20px solid transparent; border-image: url("art/scrap.png") 40 fill / 20px stretch; transform: rotate(-.5deg);
+  filter: drop-shadow(0 6px 10px rgba(0, 0, 0, .6)); animation: unfurl 200ms ease-out; }
+.error::before { content: "Trouble on the road"; display: block; margin: -4px 0 2px; font: 700 15px/1.2 var(--serif); font-variant: small-caps; letter-spacing: .1em; color: #5a1b1c; }
+.error[data-kind="notice"]::before { content: "A word from the shard"; color: var(--ink-soft); }
+.error:not([data-kind="notice"]) { padding-left: 40px; }
+.error:not([data-kind="notice"])::after { content: ""; position: absolute; left: -12px; top: -8px; width: 44px; height: 44px; background: url("art/seal.png") center / contain no-repeat; transform: rotate(-12deg); filter: drop-shadow(0 2px 3px rgba(0, 0, 0, .6)); }
+@keyframes unfurl { from { opacity: 0; transform: translateY(6px) rotate(-.5deg); } }
+
+/* status: a tiny vessel — an ember behind old glass when the shard is up, cold when it is down */
+.status { display: flex; align-items: center; gap: 11px; padding: 0 4px; font-size: 15.5px; color: var(--bone); text-shadow: 0 1px 6px #000; min-height: 40px; }
+.dot { position: relative; flex: none; width: 40px; height: 40px; background: url("art/medallion.png") center / contain no-repeat; }
+.dot::before { content: ""; position: absolute; z-index: -1; left: 21%; top: 18%; width: 58%; height: 58%; border-radius: 50%;
+  background: radial-gradient(circle at 42% 36%, #34363a, #121314 60%, #0a0a0a); }
+.dot::after { content: ""; position: absolute; left: 21%; top: 18%; width: 58%; height: 58%; border-radius: 50%; opacity: 0;
+  background: radial-gradient(circle at 50% 66%, rgba(250, 190, 120, .9), rgba(var(--ember), .72) 22%, rgba(110, 46, 20, .5) 52%, rgba(30, 14, 8, .2) 74%, transparent 80%);
+  box-shadow: 0 0 12px 1px rgba(var(--ember), .22); transition: opacity 600ms ease; }
+.status { isolation: isolate; }
+.status[data-state="online"] .dot::after { opacity: 1; animation: ember 3.8s ease-in-out infinite alternate; }
+.status[data-state="checking"] .dot::after { animation: breath 2.6s ease-in-out infinite; }
+.status[data-state="offline"] { color: var(--warm); }
+.status[data-state="offline"] .dot::before { background: radial-gradient(circle at 34% 30%, rgba(160, 170, 190, .35), transparent 22%), radial-gradient(circle at 50% 50%, #1d1f22, #0b0b0c 70%); }
+@keyframes ember { 0% { opacity: .78; } 40% { opacity: 1; } 70% { opacity: .86; } 100% { opacity: .96; } }
+@keyframes breath { 0%, 100% { opacity: .12; } 50% { opacity: .62; } }
+
+/* Play: a recessed dark-iron plate with an ember in its tray */
+.play-slot { position: relative; --p: 0; }
+.play { position: relative; isolation: isolate; display: block; width: 100%; height: 64px; padding: 0 56px 2px; border: 0; background: none; cursor: pointer;
+  font: 600 21px/1 var(--serif); letter-spacing: .34em; text-indent: .34em; text-transform: uppercase; color: #d9cdb0;
+  text-shadow: 0 -1px 0 rgba(0, 0, 0, .95), 0 1px 0 rgba(255, 228, 190, .10); transition: color 180ms ease, text-shadow 180ms ease, transform 120ms ease; }
+.play::before { content: ""; position: absolute; inset: 0; z-index: -2; border: solid transparent; border-width: 0 48px;
+  border-image: url("art/play.png") 0 96 fill / 0 48px stretch; filter: brightness(.9) drop-shadow(0 10px 18px rgba(0, 0, 0, .7)); transition: filter 220ms ease; }
+.play::after { content: ""; position: absolute; z-index: -1; left: 16px; right: 16px; top: 12px; bottom: 12px; border-radius: 3px; pointer-events: none;
+  background: radial-gradient(64% 150% at 50% 118%, rgba(var(--ember), .95), rgba(var(--ember), .34) 42%, rgba(var(--ember), .08) 68%, transparent 82%);
+  mix-blend-mode: screen; opacity: .5; transition: opacity 200ms ease; }
+.play:not(:disabled):not([data-mode="update"]):not([data-mode="download"])::after { animation: smoulder 4.6s ease-in-out infinite alternate; }
+@keyframes smoulder { from { opacity: .5; } to { opacity: .78; } }
+.play:hover:not(:disabled) { color: #f0d2a0; text-shadow: 0 -1px 0 rgba(0, 0, 0, .9), 0 0 16px rgba(var(--ember), .55); }
+.play:hover:not(:disabled)::after { opacity: 1; animation: none; }
+.play:hover:not(:disabled)::before { filter: brightness(1.06) drop-shadow(0 10px 18px rgba(0, 0, 0, .7)) drop-shadow(0 0 9px rgba(var(--ember), .38)); }
+.play:active:not(:disabled) { transform: translateY(1px); }
+.play:focus-visible { outline: none; }
+.play:focus-visible::before { filter: brightness(1.02) drop-shadow(0 0 1px rgba(232, 214, 176, 1)) drop-shadow(0 0 1px rgba(232, 214, 176, .9)); }
+
+/* cold: shard down, or still checking — ash-grey iron, no ember */
+.play:disabled { cursor: default; color: #8f897d; text-shadow: 0 -1px 0 rgba(0, 0, 0, .9); }
+.play:disabled::before { filter: saturate(.15) brightness(.66) drop-shadow(0 8px 14px rgba(0, 0, 0, .6)); }
+.play:disabled::after { opacity: 0; }
+
+/* a launcher update: a sickly-amber light instead of the ember */
+.play[data-mode="update"], .play[data-mode="download"] { --ember: var(--amber); font-size: 18px; letter-spacing: .2em; text-indent: .2em; color: #e2cf98; }
+.play[data-mode="update"]::after, .play[data-mode="download"]::after { opacity: .8; }
+.play[data-mode="update"]:hover::after, .play[data-mode="download"]:hover::after { opacity: 1; }
+/* "update ready": pressed under a burgundy wax seal on the left cap */
+.play-slot:has(.play[data-mode="update"])::before { content: ""; position: absolute; z-index: 1; left: 14px; top: 50%; width: 46px; height: 46px; margin-top: -24px;
+  background: url("art/seal.png") center / contain no-repeat; transform: rotate(-10deg); filter: drop-shadow(0 3px 4px rgba(0, 0, 0, .7)); pointer-events: none; }
+/* downloading: molten metal creeps along the bottom of the tray */
+.play-slot.has-progress::after { content: ""; position: absolute; left: 22px; right: 22px; bottom: 14px; height: 2px; border-radius: 1px; pointer-events: none;
+  background: linear-gradient(90deg, rgba(var(--amber), .9), rgba(255, 210, 120, .95)) 0 0 / calc(var(--p) * 100%) 100% no-repeat, rgba(0, 0, 0, .55);
+  box-shadow: 0 0 8px rgba(var(--amber), .35); transition: background-size 400ms ease; }
+.play-slot.has-progress .play:disabled { color: #b8a77a; font-size: 18px; letter-spacing: .2em; text-indent: .2em; }
+
+.version { align-self: center; margin-top: -2px; font: 12.5px/1.2 var(--label); letter-spacing: .04em; color: var(--ash); cursor: pointer; text-shadow: 0 1px 4px #000; transition: color 160ms ease; }
+.version:hover { color: var(--bone); text-decoration: underline dotted rgba(207, 196, 168, .5); text-underline-offset: 3px; }
+
+/* ------------------------------------------------------------------ the shard is down: the fire goes out */
+body:has(#status[data-state="offline"]) .paint-cold { opacity: 1; }
+body:has(#status[data-state="offline"]) .door-fire { opacity: 0; }
+body:has(#status[data-state="offline"]) .hero { filter: drop-shadow(18px 0 40px rgba(0, 0, 0, .55)) saturate(.35) brightness(.62); }
+body:has(#status[data-state="checking"]) .paint-cold { opacity: .55; }
+body:has(#status[data-state="checking"]) .door-fire { opacity: .3; }
+
+/* ------------------------------------------------------------------ small window */
+@media (max-height: 680px) {
+  .news-list b { font-size: 16px; }
+  .news-list li:first-child:not(.muted) b { font-size: 17px; }
+  .news-list li { padding: 10px 0 11px; }
+  .news-list p { font-size: 14.5px; line-height: 1.45; }
+  .play { height: 58px; }
+  .waystone { gap: 10px; }
+  .gate { gap: 8px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition-duration: 1ms !important; }
+  .status[data-state="checking"] .dot::after { opacity: .45; }
+}

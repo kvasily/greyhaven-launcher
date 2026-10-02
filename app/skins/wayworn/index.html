@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self'; script-src 'self'">
+  <title>Greyhaven</title>
+  <link rel="stylesheet" href="launcher.css">
+  <link rel="stylesheet" href="../../shared/chooser.css">
+</head>
+<body>
+  <!-- The road out of Greyhaven at dusk: a ruined cathedral with a fire in its west door. -->
+  <div class="world" aria-hidden="true">
+    <div class="paint paint-lit"></div>
+    <div class="paint paint-cold"></div>
+    <div class="door-fire"></div>
+    <div class="fog fog-far"></div>
+    <div class="ash ash-far"></div>
+  </div>
+  <img class="hero" src="art/hero.png" alt="" aria-hidden="true">
+  <div class="foreground" aria-hidden="true">
+    <div class="fog fog-near"></div>
+    <div class="ash ash-near"></div>
+    <div class="smudge"></div>
+  </div>
+
+  <main class="frame">
+    <header class="brand ui">
+      <h1 class="wordmark"><img src="art/wordmark.png" alt="Greyhaven"></h1>
+      <p class="tagline">One world. Every road leads somewhere worth going.</p>
+    </header>
+
+    <aside class="waystone">
+      <section class="news ui" aria-labelledby="news-title">
+        <h2 id="news-title">Notices <span class="sub">posted at the waystone</span></h2>
+        <ol id="news" class="news-list"><li class="muted">Asking the shard…</li></ol>
+      </section>
+
+      <div class="gate">
+        <p id="error" class="error" role="alert" hidden></p>
+        <div id="status" class="status ui" data-state="checking"><span class="dot"></span><span id="status-text">Looking for the shard…</span></div>
+        <div class="play-slot">
+          <button id="play" class="play" type="button" disabled>Play</button>
+        </div>
+        <span id="version" class="version ui"></span>
+      </div>
+    </aside>
+  </main>
+  <script src="mock.js"></script>
+  <script src="launcher.js"></script>
+  <script src="../../shared/chooser.js"></script>
+  <script src="skin.js"></script>
+</body>
+</html>

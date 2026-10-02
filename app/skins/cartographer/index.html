@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self'; script-src 'self'">
+  <title>Greyhaven</title>
+  <link rel="stylesheet" href="launcher.css">
+  <link rel="stylesheet" href="../../shared/chooser.css">
+</head>
+<body>
+  <!-- The cartographer's table: a map of the reach laid out by candlelight. -->
+  <main class="stage">
+    <div class="map" aria-hidden="true"></div>
+    <div class="fog fog-edge" aria-hidden="true"><i></i></div>
+    <div class="fog fog-full" aria-hidden="true"><i></i><i></i></div>
+    <div class="candle-light" aria-hidden="true"></div>
+
+    <header class="brand">
+      <h1 class="wordmark"><img src="art/wordmark.png" alt="Greyhaven"></h1>
+      <p class="tagline">Every road leads somewhere worth going.</p>
+    </header>
+
+    <div id="status" class="status" data-state="checking"><span class="dot"></span><span id="status-text">Looking for the shard…</span></div>
+
+    <section class="news" aria-labelledby="news-title">
+      <h2 id="news-title">News from the shard</h2>
+      <p id="error" class="error" role="alert" hidden></p>
+      <ol id="news" class="news-list"><li class="muted">Asking the shard…</li></ol>
+    </section>
+
+    <footer class="bar">
+      <button id="play" class="play" type="button" disabled>Play</button>
+      <span id="version" class="version"></span>
+    </footer>
+
+    <div class="candle" aria-hidden="true"><i class="flame"></i></div>
+  </main>
+  <script src="mock.js"></script>
+  <script src="launcher.js"></script>
+  <script src="../../shared/chooser.js"></script>
+</body>
+</html>

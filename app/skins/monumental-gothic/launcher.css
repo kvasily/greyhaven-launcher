@@ -1,0 +1,286 @@
+/* Greyhaven launcher — Monumental Gothic skin.
+   A cathedral shrine at night: ornament carved into the edges, a clean reliquary of news in the
+   middle, Play as an engraved plaque on the altar step. The figures carry the state:
+   rose window = the shard is up; lantern-bearers = Play is ready; gargoyles' eyes = danger. */
+
+@font-face { font-family: "Lora GH"; src: url(fonts/Lora-Variable.ttf) format("truetype"); font-weight: 400 700; font-style: normal; }
+@font-face { font-family: "Lora GH"; src: url(fonts/Lora-Italic-Variable.ttf) format("truetype"); font-weight: 400 700; font-style: italic; }
+
+:root {
+  /* palette (STYLE-gothic.md) */
+  --charcoal: #141313; --basalt: #1f1d1b; --iron: #3b3936;
+  --lime-d: #3f3b35; --lime-m: #6e6a62; --lime-l: #a39d90;
+  --bone: #c9bfa6; --ink: #ddd3bb; --ink-2: #cfc5ad; --ink-muted: #a39a86;
+  --bronze: #6a5232; --gold: #a88a4e; --legend: #d9a441; --candle: #ffb46b;
+  --blood: #6b1a16; --danger: #d0705c; --verdigris: #7fb56a;
+
+  --f-text: "Palatino Linotype", "Book Antiqua", Palatino, "Lora GH", Georgia, serif;
+  --f-num: "Bahnschrift SemiCondensed", Bahnschrift, "Segoe UI", "DejaVu Sans Condensed", sans-serif;
+  --ease-mass: cubic-bezier(.2, .7, .1, 1);
+
+  /* One composition unit: 1px at the launcher's 1280x800 window, .75px at its 960x600 minimum. */
+  --u: min(100vw / 1280, 100vh / 800);
+  --fs-body: max(14px, calc(15 * var(--u)));
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html, body { height: 100%; margin: 0; }
+body { background: #0b0a0a; color: var(--ink); font: var(--fs-body)/1.5 var(--f-text); overflow: hidden; user-select: none; -webkit-font-smoothing: antialiased; }
+button { font: inherit; color: inherit; }
+img { -webkit-user-drag: none; }
+.layer { position: absolute; inset: 0; width: 100%; height: 100%; display: block; pointer-events: none; object-fit: contain; }
+
+/* ------------------------------------------------------------------ the nave (full window) */
+.nave { position: fixed; inset: 0; overflow: hidden; }
+.wall { position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse 46% 58% at 50% 44%, rgba(40, 33, 26, .0) 0%, rgba(8, 7, 7, .5) 70%, rgba(3, 3, 3, .92) 100%),
+    linear-gradient(rgba(14, 13, 12, .80), rgba(10, 9, 9, .88)),
+    url(art/wall-ashlar.png) center top / calc(384 * var(--u)) repeat,
+    var(--charcoal); }
+/* candle smoke drifting slowly behind the shrine */
+.smoke { position: absolute; left: 0; right: 0; top: 6%; height: 70%; pointer-events: none;
+  background: url(art/smoke.png) 0 0 / calc(1024 * var(--u)) calc(512 * var(--u)) repeat-x;
+  opacity: .13; mix-blend-mode: screen;
+  -webkit-mask-image: radial-gradient(ellipse 36% 50% at 50% 50%, #000 35%, transparent 100%);
+  mask-image: radial-gradient(ellipse 36% 50% at 50% 50%, #000 35%, transparent 100%);
+  animation: smoke-a 160s linear infinite; }
+.smoke.s2 { top: 30%; opacity: .08; background-size: calc(1400 * var(--u)) calc(700 * var(--u)); animation: smoke-b 230s linear infinite reverse; }
+@keyframes smoke-a { to { background-position-x: calc(-1024 * var(--u)); } }
+@keyframes smoke-b { to { background-position-x: calc(-1400 * var(--u)); } }
+.floor { position: absolute; left: 0; right: 0; bottom: 0; height: calc(150 * var(--u));
+  background:
+    linear-gradient(rgba(0, 0, 0, 0), rgba(4, 4, 4, .9) 80%),
+    linear-gradient(90deg, rgba(0, 0, 0, .85), rgba(0, 0, 0, 0) 25%, rgba(0, 0, 0, 0) 75%, rgba(0, 0, 0, .85)); }
+
+/* ------------------------------------------------------------------ the stage (1280x800 units, centred) */
+.stage { position: fixed; width: calc(1280 * var(--u)); height: calc(800 * var(--u));
+  left: calc(50vw - 640 * var(--u)); top: calc(100vh - 800 * var(--u)); } /* extra height becomes vault above */
+.decor > * { position: absolute; pointer-events: none; }
+
+/* clustered columns at the window's edges; the gargoyles perch on their capitals */
+.column { top: calc(246 * var(--u)); bottom: calc(-4 * var(--u)); width: calc(120 * var(--u)); filter: brightness(.55) saturate(.85); }
+.col-l { left: calc(14 * var(--u)); }
+.col-r { right: calc(14 * var(--u)); }
+.column span { position: absolute; left: 0; right: 0; }
+.column .cap { top: 0; height: calc(120 * var(--u)); background: url(art/column-capital.png) center / 100% 100% no-repeat; z-index: 1; }
+.column .shaft { top: calc(110 * var(--u)); bottom: calc(80 * var(--u)); left: calc(15 * var(--u)); right: calc(15 * var(--u));
+  background: url(art/column-shaft.png) center top / calc(90 * var(--u)) calc(120 * var(--u)) repeat-y; }
+.column .base { bottom: 0; height: calc(90 * var(--u)); background: url(art/column-base.png) center bottom / 100% 100% no-repeat; }
+
+/* gargoyles: calm stone; their eyes kindle when the shard is down or something went wrong */
+.gargoyle { top: calc(8 * var(--u)); width: calc(240 * var(--u)); height: calc(240 * var(--u)); }
+.garg-l { left: calc(-46 * var(--u)); }
+.garg-r { right: calc(-46 * var(--u)); }
+.gargoyle .body { filter: brightness(.72) saturate(.85); }
+.gargoyle .glow { mix-blend-mode: screen; opacity: 0; filter: brightness(1.7) saturate(1.3); transition: opacity 900ms var(--ease-mass); }
+.gargoyle .ember { position: absolute; top: calc(57 * var(--u)); width: calc(64 * var(--u)); height: calc(40 * var(--u)); border-radius: 50%;
+  background: radial-gradient(closest-side, rgba(255, 80, 34, .6), rgba(160, 24, 12, .18) 60%, transparent);
+  mix-blend-mode: screen; opacity: 0; transition: opacity 900ms var(--ease-mass); }
+.garg-l .ember { left: calc(90 * var(--u)); }
+.garg-r .ember { right: calc(90 * var(--u)); }
+.gargoyle .halo { position: absolute; top: calc(-6 * var(--u)); width: calc(200 * var(--u)); height: calc(170 * var(--u)); border-radius: 50%;
+  background: radial-gradient(closest-side, rgba(255, 96, 40, .26), rgba(176, 50, 42, .12) 45%, rgba(107, 26, 22, .04) 70%, transparent);
+  mix-blend-mode: plus-lighter; opacity: 0; transition: opacity 1100ms var(--ease-mass); }
+.garg-l .halo { left: calc(22 * var(--u)); }
+.garg-r .halo { right: calc(22 * var(--u)); }
+
+/* arch + rose window crowning the reliquary */
+.crest { left: calc(410 * var(--u)); top: calc(130 * var(--u)); width: calc(460 * var(--u)); height: calc(134 * var(--u)); }
+.crest .arch { filter: brightness(.8) drop-shadow(0 calc(8 * var(--u)) calc(10 * var(--u)) rgba(0, 0, 0, .75)); }
+.rose { position: absolute; left: calc(172 * var(--u)); top: calc(13 * var(--u)); width: calc(116 * var(--u)); height: calc(116 * var(--u)); }
+.rose .img { filter: brightness(.55) saturate(.7); transition: filter 1400ms var(--ease-mass); }
+.rose .glow { mix-blend-mode: screen; opacity: 0; transition: opacity 1400ms var(--ease-mass); }
+.rose-bloom { position: absolute; left: calc(100 * var(--u)); top: calc(-60 * var(--u)); width: calc(260 * var(--u)); height: calc(260 * var(--u)); border-radius: 50%;
+  background: radial-gradient(closest-side, rgba(200, 70, 60, .16), rgba(70, 90, 190, .08) 50%, transparent);
+  mix-blend-mode: screen; opacity: 0; transition: opacity 1600ms var(--ease-mass); }
+
+/* lantern-bearers stand in the bays either side of the reliquary */
+.bearer { top: calc(410 * var(--u)); width: calc(192 * var(--u)); height: calc(384 * var(--u)); }
+.bearer-l { left: calc(130 * var(--u)); }
+.bearer-r { right: calc(130 * var(--u)); }
+.bearer .flick { position: absolute; inset: 0; }
+.bearer .rest, .bearer .lit { filter: brightness(.66) saturate(.7) contrast(.96); transition: opacity 1100ms var(--ease-mass); }
+.bearer .lit { opacity: 0; }
+.bearer .light { mix-blend-mode: screen; opacity: 0; transition: opacity 1100ms var(--ease-mass);
+  filter: brightness(.62) sepia(1) saturate(3.2) hue-rotate(-18deg) brightness(1.35); }
+.spill { width: calc(460 * var(--u)); height: calc(460 * var(--u)); top: calc(225 * var(--u)); border-radius: 50%;
+  background: radial-gradient(closest-side, rgba(255, 180, 107, .17), rgba(255, 150, 80, .05) 55%, transparent);
+  mix-blend-mode: screen; opacity: 0; transition: opacity 1400ms var(--ease-mass); }
+.spill-l { left: calc(50 * var(--u)); }
+.spill-r { right: calc(50 * var(--u)); }
+
+/* candles on the reliquary's top corners; they light one after another when the page opens */
+.candle { width: calc(36 * var(--u)); height: calc(96 * var(--u)); top: calc(152 * var(--u)); }
+.candle.c1 { left: calc(322 * var(--u)); } .candle.c2 { left: calc(354 * var(--u)); top: calc(160 * var(--u)); }
+.candle.c3 { right: calc(354 * var(--u)); top: calc(160 * var(--u)); } .candle.c4 { right: calc(322 * var(--u)); }
+.candle img { position: absolute; inset: 0; width: 100%; height: 100%; }
+.candle .body { filter: brightness(.8); }
+.candle .flame { mix-blend-mode: screen; opacity: 0; transform-origin: 50% 30%;
+  animation: ignite 700ms var(--ease-mass) both, flame 2.3s ease-in-out 1.6s infinite; }
+.candle .halo { position: absolute; left: calc(-34 * var(--u)); top: calc(-32 * var(--u)); width: calc(104 * var(--u)); height: calc(104 * var(--u)); border-radius: 50%;
+  background: radial-gradient(closest-side, rgba(255, 180, 107, .30), rgba(255, 140, 60, .08) 55%, transparent);
+  mix-blend-mode: screen; opacity: 0; animation: ignite 900ms var(--ease-mass) both, halo 3.1s steps(1, end) 1.8s infinite; }
+.c1 .flame, .c1 .halo { animation-delay: 600ms, 1.6s; }
+.c2 .flame, .c2 .halo { animation-delay: 690ms, 1.9s; }
+.c3 .flame, .c3 .halo { animation-delay: 780ms, 1.7s; }
+.c4 .flame, .c4 .halo { animation-delay: 870ms, 2s; }
+@keyframes ignite { from { opacity: 0; } to { opacity: 1; } }
+@keyframes flame { 0%, 100% { transform: scale(1, 1); } 30% { transform: scale(.96, 1.05); } 55% { transform: scale(1.03, .97); } 80% { transform: scale(.98, 1.03); } }
+@keyframes halo { 0% { opacity: 1; } 23% { opacity: .94; } 41% { opacity: 1; } 67% { opacity: .93; } 84% { opacity: .98; } }
+
+/* ------------------------------------------------------------------ the shrine (content) */
+.shrine { position: absolute; inset: 0; }
+.brand { position: absolute; left: 0; right: 0; top: calc(22 * var(--u)); text-align: center; }
+.wordmark { margin: 0; line-height: 0; }
+.wordmark img { height: calc(80 * var(--u)); width: auto; max-width: calc(560 * var(--u)); object-fit: contain;
+  filter: drop-shadow(0 calc(6 * var(--u)) calc(14 * var(--u)) rgba(0, 0, 0, .9)); }
+.tagline { margin: calc(8 * var(--u)) 0 0; color: var(--ink-muted); font-style: italic; font-size: max(14px, calc(15 * var(--u))); letter-spacing: .03em;
+  text-shadow: 0 1px 2px #000, 0 0 12px #000; }
+
+/* the reliquary: carved quatrefoil frame around a basalt slab */
+.reliquary { position: absolute; left: calc(300 * var(--u)); top: calc(240 * var(--u)); width: calc(680 * var(--u)); height: calc(436 * var(--u)); }
+.reliquary::before { content: ""; position: absolute; inset: calc(30 * var(--u));
+  background:
+    radial-gradient(ellipse 80% 70% at 50% 35%, rgba(31, 29, 27, 0), rgba(10, 9, 8, .6) 100%),
+    linear-gradient(rgba(18, 17, 16, .62), rgba(18, 17, 16, .62)),
+    url(art/bg-basalt.png) 0 0 / calc(256 * var(--u)) repeat, var(--basalt);
+  box-shadow: inset 0 0 calc(50 * var(--u)) rgba(0, 0, 0, .9); }
+/* lantern light pooling on the slab's sides when Play is ready */
+.reliquary::after { content: ""; position: absolute; inset: calc(44 * var(--u)); pointer-events: none; mix-blend-mode: screen; opacity: 0;
+  background:
+    radial-gradient(ellipse 40% 70% at 0% 45%, rgba(255, 170, 100, .10), transparent 70%),
+    radial-gradient(ellipse 40% 70% at 100% 45%, rgba(255, 170, 100, .10), transparent 70%);
+  transition: opacity 1400ms var(--ease-mass); }
+.frame { position: absolute; inset: 0; pointer-events: none; z-index: 1;
+  border: calc(44 * var(--u)) solid transparent; border-image: url(art/stone-frame.png) 80 / calc(44 * var(--u)) round;
+  filter: brightness(.78) contrast(1.05) drop-shadow(0 calc(24 * var(--u)) calc(40 * var(--u)) rgba(0, 0, 0, .8)); }
+
+/* engraved cartouches sitting on the frame's top and bottom friezes */
+.cartouche { position: absolute; z-index: 2; left: 50%; transform: translateX(-50%); display: flex; align-items: center; justify-content: center;
+  height: calc(44 * var(--u)); min-height: 34px; margin: 0; white-space: nowrap;
+  border-style: solid; border-width: 0 calc(38 * var(--u)); border-image: url(art/plaque-normal.png) 0 96 fill / 0 calc(38 * var(--u)) stretch;
+  filter: drop-shadow(0 calc(3 * var(--u)) calc(4 * var(--u)) rgba(0, 0, 0, .8)); }
+.cartouche.title { top: calc(-44 * var(--u)); min-width: calc(230 * var(--u)); }
+.cartouche.title span { font: 600 max(13px, calc(15 * var(--u)))/1 var(--f-text); letter-spacing: .32em; padding-left: .32em; text-transform: uppercase; color: #d8cdb2;
+  text-shadow: 0 -1px 0 rgba(0, 0, 0, .95), 0 1px 0 rgba(255, 232, 190, .16), 0 0 14px rgba(255, 180, 107, .12); }
+.shard { bottom: 0; min-width: calc(330 * var(--u)); padding: 0 calc(10 * var(--u)); }
+
+/* the news itself: typeset ivory on basalt */
+.news { position: absolute; inset: calc(44 * var(--u)) calc(44 * var(--u)); display: flex; flex-direction: column; z-index: 2; }
+.news-scroll { flex: 1; min-height: 0; overflow-y: auto; margin: calc(18 * var(--u)) calc(6 * var(--u)) calc(4 * var(--u)); padding: calc(4 * var(--u)) calc(26 * var(--u)) 30px;
+  /* fade the last lines into the stone, but keep the scrollbar strip whole */
+  -webkit-mask: linear-gradient(#000 calc(100% - 34px), transparent), linear-gradient(#000, #000) right / 10px 100% no-repeat;
+  mask: linear-gradient(#000 calc(100% - 34px), transparent), linear-gradient(#000, #000) right / 10px 100% no-repeat; }
+.news-scroll:focus { outline: none; }
+.news-scroll:focus-visible { outline: 1px solid rgba(217, 180, 106, .55); outline-offset: -1px; border-radius: 2px; }
+.news-scroll::-webkit-scrollbar { width: 10px; }
+.news-scroll::-webkit-scrollbar-button { display: none; height: 0; }
+.news-scroll::-webkit-scrollbar-track { background: linear-gradient(90deg, transparent 4px, rgba(0, 0, 0, .45) 4px, rgba(0, 0, 0, .45) 6px, transparent 6px); }
+.news-scroll::-webkit-scrollbar-thumb { background: linear-gradient(90deg, #4a3f35, #8a7350 50%, #4a3f35); border-radius: 5px; border: 2px solid transparent; background-clip: padding-box; }
+.news-list { list-style: none; margin: 0; padding: 0; }
+.news-list li { position: relative; padding: calc(13 * var(--u)) 0; }
+.news-list li:first-child { padding-top: 0; }
+.news-list li + li::before { content: ""; position: absolute; left: 18%; right: 18%; top: 0; height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(168, 138, 78, .45) 30%, rgba(168, 138, 78, .45) 70%, transparent); }
+.news-list li + li::after { content: ""; position: absolute; left: 50%; top: -3px; width: 7px; height: 7px; margin-left: -3.5px; transform: rotate(45deg);
+  background: #1a1816; border: 1px solid rgba(168, 138, 78, .7); }
+.news-list time { display: block; color: #b29a6c; font: 600 max(12px, calc(12 * var(--u)))/1.3 var(--f-num); letter-spacing: .14em; text-transform: uppercase; }
+.news-list b { display: block; margin: calc(3 * var(--u)) 0 calc(4 * var(--u)); font-weight: 700; font-size: max(16px, calc(18 * var(--u))); line-height: 1.25; color: #e6dcc3; letter-spacing: .01em; }
+.news-list p { margin: 0; color: var(--ink-2); user-select: text; max-width: 62ch; }
+.news-list li.muted { color: var(--ink-muted); font-style: italic; text-align: center; padding-top: calc(40 * var(--u)); }
+
+/* error / notice: an inscription line along the slab's lower edge */
+.error { margin: 0 calc(32 * var(--u)) calc(30 * var(--u)); padding: calc(7 * var(--u)) 0 0; border-top: 1px solid rgba(208, 112, 92, .35);
+  color: #e39a85; font-size: max(14px, calc(14 * var(--u))); text-align: center; line-height: 1.4; }
+.error::before { content: "✠  "; color: #b0322a; }
+.error[data-kind="notice"] { color: #e2c27e; border-top-color: rgba(217, 164, 65, .35); }
+.error[data-kind="notice"]::before { content: "✦  "; color: var(--legend); }
+
+/* shard status, engraved on the lower frieze */
+.status { display: flex; align-items: center; gap: calc(10 * var(--u)); font-size: max(14px, calc(15 * var(--u))); color: var(--ink); letter-spacing: .02em;
+  text-shadow: 0 -1px 0 rgba(0, 0, 0, .9), 0 1px 0 rgba(255, 232, 190, .1); }
+.dot { flex: none; width: 11px; height: 11px; border-radius: 50%; background: radial-gradient(circle at 35% 30%, #8a8378, #3a3631 70%);
+  box-shadow: 0 0 0 2px rgba(0, 0, 0, .7), 0 0 0 3px rgba(168, 138, 78, .35); }
+.status[data-state="online"] .dot { background: radial-gradient(circle at 35% 30%, #d6f2c6, var(--verdigris) 45%, #2f5a26); box-shadow: 0 0 0 2px rgba(0, 0, 0, .7), 0 0 0 3px rgba(168, 138, 78, .45), 0 0 10px rgba(127, 181, 106, .8); }
+.status[data-state="offline"] .dot { background: radial-gradient(circle at 35% 30%, #ffb19c, #c0402c 45%, #4a0f0a); box-shadow: 0 0 0 2px rgba(0, 0, 0, .7), 0 0 0 3px rgba(168, 138, 78, .35), 0 0 10px rgba(220, 70, 40, .7); }
+.status[data-state="checking"] .dot { animation: pulse 1.4s ease-in-out infinite; }
+@keyframes pulse { 50% { opacity: .35; } }
+
+/* ------------------------------------------------------------------ the altar: Play */
+.altar { position: absolute; left: 0; right: 0; top: calc(690 * var(--u)); display: flex; flex-direction: column; align-items: center; gap: calc(8 * var(--u)); }
+.play { position: relative; display: flex; align-items: center; justify-content: center;
+  min-width: calc(320 * var(--u)); height: max(44px, calc(60 * var(--u))); padding: 0 calc(16 * var(--u)); margin: 0;
+  border-style: solid; border-width: 0 calc(52 * var(--u)); background: none;
+  border-image: url(art/plaque-active.png) 0 96 fill / 0 calc(52 * var(--u)) stretch;
+  color: #f4e6c4; font: 700 max(17px, calc(21 * var(--u)))/1 var(--f-text); letter-spacing: .3em; text-indent: .3em; text-transform: uppercase;
+  text-shadow: 0 -1px 0 rgba(0, 0, 0, .95), 0 1px 0 rgba(255, 220, 150, .25), 0 0 16px rgba(255, 180, 90, .45);
+  cursor: pointer; outline: none;
+  filter: drop-shadow(0 calc(10 * var(--u)) calc(16 * var(--u)) rgba(0, 0, 0, .85)) drop-shadow(0 0 calc(18 * var(--u)) rgba(255, 170, 80, .22));
+  transition: filter 350ms var(--ease-mass), color 350ms var(--ease-mass); }
+/* candle uplight on hover: a warm pool rising from under the plaque */
+.play::before { content: ""; position: absolute; left: calc(-40 * var(--u)); right: calc(-40 * var(--u)); top: 8%; bottom: 8%; pointer-events: none; z-index: -1;
+  background: radial-gradient(ellipse 55% 130% at 50% 120%, rgba(255, 196, 120, .9), rgba(255, 150, 60, .3) 45%, transparent 80%);
+  mix-blend-mode: screen; opacity: 0; transition: opacity 350ms var(--ease-mass); }
+.play:hover:not(:disabled) { filter: brightness(1.2) drop-shadow(0 calc(10 * var(--u)) calc(16 * var(--u)) rgba(0, 0, 0, .85)) drop-shadow(0 0 calc(30 * var(--u)) rgba(255, 170, 80, .55)); color: #fff6e0;
+  text-shadow: 0 -1px 0 rgba(0, 0, 0, .95), 0 0 10px rgba(255, 200, 120, .7), 0 0 26px rgba(255, 150, 60, .55); }
+.play:hover:not(:disabled)::before { opacity: 1; }
+.play:active:not(:disabled) { transform: translateY(1px); filter: brightness(.96) drop-shadow(0 calc(6 * var(--u)) calc(10 * var(--u)) rgba(0, 0, 0, .85)); }
+.play:focus-visible { outline: 2px solid #f0dcb0; outline-offset: 5px; border-radius: 3px; }
+/* disabled: cold, unlit stone */
+.play:disabled { border-image-source: url(art/plaque-normal.png); cursor: default; color: #aaa294; letter-spacing: .22em; text-indent: .22em;
+  text-shadow: 0 -1px 0 rgba(0, 0, 0, .95), 0 1px 0 rgba(255, 232, 190, .08);
+  filter: brightness(.82) saturate(.55) drop-shadow(0 calc(10 * var(--u)) calc(16 * var(--u)) rgba(0, 0, 0, .85)); }
+/* Downloading an update: molten gold creeps into the inlay and ebbs (the percentage is in the text) */
+.play[title^="Downloading"]::after { content: ""; position: absolute; top: 0; bottom: 0; left: calc(-52 * var(--u)); right: calc(-52 * var(--u)); pointer-events: none;
+  border-style: solid; border-width: 0 calc(52 * var(--u)); border-image: url(art/plaque-active.png) 0 96 fill / 0 calc(52 * var(--u)) stretch;
+  opacity: .1; animation: pour 2.8s ease-in-out infinite; }
+@keyframes pour { 50% { opacity: .42; } }
+/* Update / Download: a wax seal pressed into the plaque's left cap */
+.play[data-mode="update"], .play[data-mode="download"] { letter-spacing: .2em; text-indent: .2em; font-size: max(16px, calc(19 * var(--u))); padding-left: calc(48 * var(--u)); }
+.play[data-mode="update"]::after, .play[data-mode="download"]::after { content: ""; position: absolute; left: calc(-30 * var(--u)); top: 50%;
+  width: calc(64 * var(--u)); height: calc(64 * var(--u)); margin-top: calc(-32 * var(--u));
+  background: url(art/seal-intact.png) center / contain no-repeat; filter: drop-shadow(0 2px 3px rgba(0, 0, 0, .8)); }
+.play[data-mode="update"]:active::after, .play[data-mode="download"]:active::after { background-image: url(art/seal-cracked.png); }
+
+.version { color: var(--ink-muted); font: max(12px, calc(13 * var(--u)))/1.4 var(--f-num); letter-spacing: .06em; cursor: pointer; padding: 2px 6px; border-radius: 2px;
+  text-shadow: 0 1px 2px #000; transition: color 300ms; }
+.version:hover { color: var(--ink); text-decoration: underline; text-decoration-color: rgba(168, 138, 78, .6); text-underline-offset: 3px; }
+
+/* ------------------------------------------------------------------ states (what the figures say) */
+/* The shard is up: the rose window is lit from behind. */
+body:has(#status[data-state="online"]) .rose .img { filter: brightness(.85) saturate(.9); }
+body:has(#status[data-state="online"]) .rose .glow { opacity: .6; }
+body:has(#status[data-state="online"]) .rose-bloom { opacity: 1; }
+/* Play is ready: the lantern-bearers' lanterns burn. */
+body:has(#play:enabled) .bearer .rest { opacity: 0; }
+body:has(#play:enabled) .bearer .lit { opacity: 1; }
+body:has(#play:enabled) .bearer .light { opacity: .56; }
+body:has(#play:enabled) .spill { opacity: .9; }
+body:has(#play:enabled) .reliquary::after { opacity: 1; }
+body:has(#play:enabled) .bearer .flick { animation: flicker 3.7s steps(1, end) infinite; }
+body:has(#play:enabled) .bearer-r .flick { animation-duration: 4.3s; animation-delay: -1.3s; }
+@keyframes flicker {
+  0% { opacity: 1; filter: brightness(1); } 9% { opacity: .97; filter: brightness(.985); } 17% { opacity: .995; filter: brightness(1.02); }
+  26% { opacity: .95; filter: brightness(.975); } 34% { opacity: .985; filter: brightness(1.01); } 47% { opacity: 1; filter: brightness(1.03); }
+  58% { opacity: .96; filter: brightness(.98); } 66% { opacity: .94; filter: brightness(.97); } 73% { opacity: .99; filter: brightness(1.015); }
+  85% { opacity: .965; filter: brightness(.99); } 93% { opacity: 1; filter: brightness(1.02); } }
+/* Danger — the shard is down, or the game sent back an error: the gargoyles wake. */
+body:has(#status[data-state="offline"]) .gargoyle .glow,
+body:has(#error:not([hidden]):not([data-kind="notice"])) .gargoyle .glow { opacity: 1; animation: ember 2.6s ease-in-out infinite; }
+body:has(#status[data-state="offline"]) .gargoyle :is(.ember, .halo),
+body:has(#error:not([hidden]):not([data-kind="notice"])) .gargoyle :is(.ember, .halo) { opacity: 1; }
+@keyframes ember { 0%, 100% { filter: brightness(1.5) saturate(1.3); } 50% { filter: brightness(2) saturate(1.4); } }
+/* Offline: the shrine goes cold — status plaque tinted with dried blood, the slab darker. */
+body:has(#status[data-state="offline"]) .shard { filter: sepia(.5) hue-rotate(-28deg) saturate(1.6) brightness(.9) drop-shadow(0 3px 4px rgba(0, 0, 0, .8)); }
+body:has(#status[data-state="offline"]) .news-list li.muted { color: #e39a85; font-style: normal; }
+body:has(#status[data-state="offline"]) .smoke { opacity: .05; }
+body:has(#status[data-state="offline"]) .news-scroll { background: url(art/seal-cracked.png) center calc(40 * var(--u)) / calc(96 * var(--u)) no-repeat; }
+body:has(#status[data-state="offline"]) .news-list li.muted { padding: calc(150 * var(--u)) 10% 0; }
+
+/* ------------------------------------------------------------------ motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 1ms !important; animation-iteration-count: 1 !important; animation-delay: 0ms !important; transition-duration: 1ms !important; }
+  .smoke { animation: none !important; }
+}
