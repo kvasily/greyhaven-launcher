@@ -1,4 +1,5 @@
-// The gear in the front page's corner: which of the launcher's designs you see. "A different one
+// The gear in the front page's corner: the front page's view (Log in, the default, or Play:
+// launcher.js) and which of the launcher's designs you see. "A different one
 // each launch" (the default) or one you pin; pinning another design shows it at once. The launcher
 // keeps the choice (main.cjs, launcher:skins / launcher:pin). Shared by every design in app/skins/;
 // it only adds itself, so a design's own page needs nothing but its two lines (the stylesheet and
@@ -8,19 +9,19 @@
   const api = window.launcher || {}
   const PREVIEW = [['wayworn', 'Wayworn'], ['blackened-iron', 'Blackened Iron'], ['cartographer', 'Cartographer'], ['monumental-gothic', 'Monumental Gothic'], ['illuminated', 'Illuminated']]
   const here = (/\/skins\/([^/]+)\//.exec(location.pathname) || [])[1] || null
-  const fetchSkins = () => (api.skins ? api.skins() : Promise.resolve({ skins: PREVIEW.map(([id, name]) => ({ id, name })), current: here, pinned: null }))
+  const fetchSkins = () => (api.skins ? api.skins() : Promise.resolve({ skins: PREVIEW.map(([id, name]) => ({ id, name })), current: here, pinned: null, front: document.documentElement.dataset.front || 'login' }))
 
   const gear = document.createElement('button')
-  gear.type = 'button'; gear.className = 'gh-chooser-gear'; gear.title = 'Launcher art'
-  gear.setAttribute('aria-label', 'Launcher art'); gear.setAttribute('aria-haspopup', 'dialog'); gear.setAttribute('aria-expanded', 'false')
+  gear.type = 'button'; gear.className = 'gh-chooser-gear'; gear.title = 'Launcher settings'
+  gear.setAttribute('aria-label', 'Launcher settings'); gear.setAttribute('aria-haspopup', 'dialog'); gear.setAttribute('aria-expanded', 'false')
   gear.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10.3 2h3.4l.5 2.7a7.6 7.6 0 0 1 1.9 1.1l2.6-.9 1.7 2.9-2.1 1.8a7.7 7.7 0 0 1 0 2.2l2.1 1.8-1.7 2.9-2.6-.9a7.6 7.6 0 0 1-1.9 1.1l-.5 2.7h-3.4l-.5-2.7a7.6 7.6 0 0 1-1.9-1.1l-2.6.9-1.7-2.9 2.1-1.8a7.7 7.7 0 0 1 0-2.2L3.6 7.8l1.7-2.9 2.6.9a7.6 7.6 0 0 1 1.9-1.1z"/><circle cx="12" cy="12" r="3.2"/></svg>'
 
   const panel = document.createElement('div')
   panel.className = 'gh-chooser'; panel.hidden = true
-  panel.setAttribute('role', 'dialog'); panel.setAttribute('aria-label', 'Launcher art')
+  panel.setAttribute('role', 'dialog'); panel.setAttribute('aria-label', 'Launcher settings')
   document.body.append(gear, panel)
 
-  let state = { skins: [], current: here, pinned: null }
+  let state = { skins: [], current: here, pinned: null, front: 'login' }
   const card = (id, name, thumb, note) => {
     const b = document.createElement('button')
     b.type = 'button'; b.className = 'gh-chooser-option'; b.dataset.pick = id
@@ -34,6 +35,15 @@
   }
   function render() {
     panel.textContent = ''
+    // The front page's view: log in here first, or the Play button (the game logs in).
+    const fh = document.createElement('h2'); fh.textContent = 'Front page'
+    const fp = document.createElement('p'); fp.textContent = state.front === 'play' ? 'Play first: you log in inside the game.' : 'Log in here first: Play opens the game at your characters.'
+    const views = document.createElement('div'); views.className = 'gh-chooser-views'; views.setAttribute('role', 'group'); views.setAttribute('aria-label', 'Front page')
+    for (const [mode, label] of [['login', 'Log in'], ['play', 'Play']]) {
+      const b = document.createElement('button'); b.type = 'button'; b.className = 'gh-chooser-view'; b.dataset.front = mode; b.textContent = label
+      b.setAttribute('aria-pressed', String(state.front === mode)); views.append(b)
+    }
+    panel.append(fh, fp, views)
     const h = document.createElement('h2'); h.textContent = 'Launcher art'
     const p = document.createElement('p'); p.textContent = state.pinned ? 'Pinned: this design every launch.' : 'A different design each time you start the launcher.'
     const list = document.createElement('div'); list.className = 'gh-chooser-list'
@@ -51,6 +61,14 @@
   function close(refocus) { if (!isOpen()) return; panel.hidden = true; gear.setAttribute('aria-expanded', 'false'); if (refocus) gear.focus() }
   gear.addEventListener('click', () => { if (isOpen()) close(true); else void open() })
   panel.addEventListener('click', async e => {
+    const v = e.target.closest('[data-front]')
+    if (v) {
+      const mode = v.dataset.front
+      if (mode === state.front) return
+      // (The launcher shows the front page again in that view.)
+      if (api.front) { try { await api.front(mode) } catch { return } }
+      state = { ...state, front: mode }; render(); panel.querySelector(`[data-front="${mode}"]`)?.focus(); return
+    }
     const b = e.target.closest('[data-pick]'); if (!b) return
     const id = b.dataset.pick || null
     if (!api.pin) { state = { ...state, pinned: id }; render(); return }

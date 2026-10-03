@@ -248,19 +248,111 @@ img { -webkit-user-drag: none; }
   text-shadow: 0 1px 2px #000; transition: color 300ms; }
 .version:hover { color: var(--ink); text-decoration: underline; text-decoration-color: rgba(168, 138, 78, .6); text-underline-offset: 3px; }
 
+/* ------------------------------------------------------------------ the login (launcher.js fills #login) */
+/* In the login view the shrine stacks: the reliquary gives up height to whatever stands on the altar
+   step, so nothing ever overlaps. Logged out, a carved tablet stands there between the
+   lantern-bearers, its submit the Play plaque; logged in, a line over Play says who you are. */
+html[data-front="login"] .shrine { display: flex; flex-direction: column; align-items: center; }
+html[data-front="login"] .reliquary { position: relative; left: auto; top: auto; flex: 0 1 calc(436 * var(--u)); min-height: calc(96 * var(--u)); margin-top: calc(240 * var(--u)); }
+html[data-front="login"] .altar { position: relative; left: auto; right: auto; top: auto; flex: none; width: 100%; margin: calc(14 * var(--u)) 0 calc(8 * var(--u)); }
+html[data-front="login"] .news { overflow: hidden; } /* (squeezed to its frame, it clips rather than spill onto the tablet) */
+html[data-front="login"][data-auth="out"] .altar { margin-top: calc(34 * var(--u)); } /* room for the tablet's cartouche */
+/* a launcher update while logged out: Update and the version share a line under the tablet */
+html[data-front="login"][data-auth="out"][data-play="shown"] .altar { flex-direction: row; flex-wrap: wrap; justify-content: center; column-gap: 18px; }
+html[data-front="login"][data-auth="out"][data-play="shown"] .login { flex: 0 0 100%; }
+
+.login { display: flex; flex-direction: column; align-items: center; }
+.login-form { position: relative; display: grid; grid-template-columns: 1fr 1fr; align-items: end; gap: calc(8 * var(--u)) 16px;
+  width: max(440px, calc(560 * var(--u))); padding: calc(18 * var(--u)) calc(14 * var(--u)) calc(4 * var(--u));
+  border: calc(24 * var(--u)) solid transparent; border-image: url(art/stone-frame.png) 80 / calc(24 * var(--u)) round;
+  background:
+    radial-gradient(ellipse 80% 80% at 50% 30%, rgba(31, 29, 27, 0), rgba(10, 9, 8, .55) 100%),
+    linear-gradient(rgba(18, 17, 16, .6), rgba(18, 17, 16, .6)),
+    url(art/bg-basalt.png) 0 0 / calc(256 * var(--u)) repeat, var(--basalt);
+  background-clip: padding-box; box-shadow: inset 0 0 calc(30 * var(--u)) rgba(0, 0, 0, .9);
+  filter: drop-shadow(0 calc(16 * var(--u)) calc(24 * var(--u)) rgba(0, 0, 0, .8)); }
+.login-form > * { grid-column: 1 / -1; min-width: 0; }
+/* the title: an engraved cartouche on the tablet's brow, as Tidings is on the reliquary's */
+.login-title { position: absolute; z-index: 1; top: calc(-24 * var(--u) - max(17px, calc(22 * var(--u)))); left: 50%; transform: translateX(-50%);
+  display: flex; align-items: center; justify-content: center; min-width: calc(220 * var(--u)); height: calc(44 * var(--u)); min-height: 34px; margin: 0; white-space: nowrap;
+  border-style: solid; border-width: 0 calc(38 * var(--u)); border-image: url(art/plaque-normal.png) 0 96 fill / 0 calc(38 * var(--u)) stretch;
+  filter: drop-shadow(0 calc(3 * var(--u)) calc(4 * var(--u)) rgba(0, 0, 0, .8));
+  font: 600 max(13px, calc(15 * var(--u)))/1 var(--f-text); letter-spacing: .3em; text-indent: .3em; text-transform: uppercase; color: #d8cdb2;
+  text-shadow: 0 -1px 0 rgba(0, 0, 0, .95), 0 1px 0 rgba(255, 232, 190, .16), 0 0 14px rgba(255, 180, 107, .12); }
+.login-field { grid-column: auto; display: flex; flex-direction: column; gap: 4px; }
+.login-field span { font: 600 12px/1.3 var(--f-num); letter-spacing: .14em; text-transform: uppercase; color: #b29a6c; }
+/* the fields: letters cut into the basalt; candlelight gathers on the edge of the one being written */
+.login-field input { width: 100%; height: max(38px, calc(40 * var(--u))); padding: 0 10px; border: 0; border-radius: 2px;
+  background: linear-gradient(rgba(5, 5, 4, .92), rgba(16, 15, 14, .85)); color: #e6dcc3; font: max(15px, calc(16 * var(--u)))/1 var(--f-text); letter-spacing: .02em;
+  box-shadow: inset 0 2px 5px #000, inset 0 0 0 1px rgba(0, 0, 0, .8), 0 1px 0 rgba(168, 138, 78, .3);
+  user-select: text; caret-color: var(--candle); }
+.login-field input:focus { outline: none; box-shadow: inset 0 2px 5px #000, inset 0 0 0 1px rgba(240, 220, 176, .85), 0 0 12px rgba(255, 170, 80, .32); }
+/* making an account: the rule beside the name, the two passwords side by side under it */
+.login-form:has(.login-confirm:not([hidden])) .login-field:first-of-type { grid-row: 1; grid-column: 1; }
+.login-rule { grid-column: 2; grid-row: 1; align-self: center; margin: 0; padding-top: 14px; color: var(--ink-muted); font-size: max(13px, calc(13.5 * var(--u))); font-style: italic; line-height: 1.35; }
+.login-error { margin: 0; padding-top: 2px; color: #e39a85; font-size: max(14px, calc(14 * var(--u))); text-align: center; line-height: 1.4; user-select: text; }
+.login-error::before { content: "✠  "; color: #b0322a; }
+
+/* the submit: the Play plaque itself */
+.login-submit { position: relative; justify-self: center; display: flex; align-items: center; justify-content: center;
+  min-width: calc(300 * var(--u)); height: max(44px, calc(58 * var(--u))); margin: calc(6 * var(--u)) 0 0; padding: 0 calc(16 * var(--u));
+  border-style: solid; border-width: 0 calc(52 * var(--u)); background: none; border-image: url(art/plaque-active.png) 0 96 fill / 0 calc(52 * var(--u)) stretch;
+  color: #f4e6c4; font: 700 max(17px, calc(20 * var(--u)))/1 var(--f-text); letter-spacing: .26em; text-indent: .26em; text-transform: uppercase; white-space: nowrap;
+  text-shadow: 0 -1px 0 rgba(0, 0, 0, .95), 0 1px 0 rgba(255, 220, 150, .25), 0 0 16px rgba(255, 180, 90, .45);
+  cursor: pointer; filter: drop-shadow(0 calc(8 * var(--u)) calc(12 * var(--u)) rgba(0, 0, 0, .85)) drop-shadow(0 0 calc(18 * var(--u)) rgba(255, 170, 80, .22));
+  transition: filter 350ms var(--ease-mass), color 350ms var(--ease-mass); }
+.login-form:has(.login-confirm:not([hidden])) .login-submit { letter-spacing: .16em; text-indent: .16em; }
+.login-submit::before { content: ""; position: absolute; left: calc(-40 * var(--u)); right: calc(-40 * var(--u)); top: 8%; bottom: 8%; pointer-events: none; z-index: -1;
+  background: radial-gradient(ellipse 55% 130% at 50% 120%, rgba(255, 196, 120, .9), rgba(255, 150, 60, .3) 45%, transparent 80%);
+  mix-blend-mode: screen; opacity: 0; transition: opacity 350ms var(--ease-mass); }
+.login-submit:hover:not(:disabled) { filter: brightness(1.2) drop-shadow(0 calc(8 * var(--u)) calc(12 * var(--u)) rgba(0, 0, 0, .85)) drop-shadow(0 0 calc(30 * var(--u)) rgba(255, 170, 80, .55)); color: #fff6e0; }
+.login-submit:hover:not(:disabled)::before { opacity: 1; }
+.login-submit:active:not(:disabled) { transform: translateY(1px); }
+.login-submit:focus-visible { outline: 2px solid #f0dcb0; outline-offset: 4px; border-radius: 3px; }
+.login-submit:disabled { border-image-source: url(art/plaque-normal.png); cursor: default; color: #aaa294; letter-spacing: .2em; text-indent: .2em;
+  text-shadow: 0 -1px 0 rgba(0, 0, 0, .95), 0 1px 0 rgba(255, 232, 190, .08);
+  filter: brightness(.82) saturate(.55) drop-shadow(0 calc(8 * var(--u)) calc(12 * var(--u)) rgba(0, 0, 0, .85)); }
+
+.login-switch, .login-signout { justify-self: center; min-height: 28px; padding: 2px 8px; border: 0; border-radius: 2px; background: none; cursor: pointer;
+  color: var(--ink-muted); font: italic max(14px, calc(14.5 * var(--u)))/1.2 var(--f-text);
+  text-decoration: underline 1px rgba(168, 138, 78, .5); text-underline-offset: 3px; text-shadow: 0 1px 2px #000; transition: color 300ms; }
+.login-switch:hover, .login-signout:hover { color: var(--ink); text-decoration-color: rgba(217, 164, 65, .8); }
+.login-switch:focus-visible, .login-signout:focus-visible { outline: 1px solid #f0dcb0; outline-offset: 1px; color: var(--ink); }
+
+/* logged in: one engraved line over the altar step */
+.login-signed { display: flex; align-items: center; gap: 0 12px; margin-bottom: calc(6 * var(--u));
+  color: var(--ink-2); font-size: max(14px, calc(15 * var(--u))); text-shadow: 0 -1px 0 rgba(0, 0, 0, .9), 0 0 10px #000; }
+.login-account { margin: 0; }
+.login-account b { font-weight: 700; letter-spacing: .04em; color: #e6dcc3; }
+.login-signed::before { content: ""; order: 1; width: 6px; height: 6px; transform: rotate(45deg); border: 1px solid rgba(168, 138, 78, .7); background: #1a1816; }
+.login-signout { order: 2; }
+#login[data-state="checking"] .login-form { opacity: .8; }
+/* offline: the tablet goes as cold as the status plaque */
+body:has(#status[data-state="offline"]) .login-form { filter: saturate(.4) brightness(.85) drop-shadow(0 calc(16 * var(--u)) calc(24 * var(--u)) rgba(0, 0, 0, .8)); }
+
+/* (the smallest windows: the tablet packs closer, so an error while making an account still fits) */
+@media (max-height: 680px) {
+  html[data-front="login"] .reliquary { min-height: calc(88 * var(--u)); }
+  html[data-front="login"][data-auth="out"] .altar { margin-top: calc(30 * var(--u)); }
+  .login-form { row-gap: 3px; padding-top: calc(12 * var(--u)); }
+  .login-submit { margin-top: 2px; }
+  .login-switch { min-height: 24px; }
+}
+
 /* ------------------------------------------------------------------ states (what the figures say) */
 /* The shard is up: the rose window is lit from behind. */
 body:has(#status[data-state="online"]) .rose .img { filter: brightness(.85) saturate(.9); }
 body:has(#status[data-state="online"]) .rose .glow { opacity: .6; }
 body:has(#status[data-state="online"]) .rose-bloom { opacity: 1; }
 /* Play is ready: the lantern-bearers' lanterns burn. */
-body:has(#play:enabled) .bearer .rest { opacity: 0; }
-body:has(#play:enabled) .bearer .lit { opacity: 1; }
-body:has(#play:enabled) .bearer .light { opacity: .56; }
-body:has(#play:enabled) .spill { opacity: .9; }
-body:has(#play:enabled) .reliquary::after { opacity: 1; }
-body:has(#play:enabled) .bearer .flick { animation: flicker 3.7s steps(1, end) infinite; }
-body:has(#play:enabled) .bearer-r .flick { animation-duration: 4.3s; animation-delay: -1.3s; }
+/* (In the login view, logged out: the tablet's submit is the Play that is ready.) */
+body:has(#play:enabled, .login-form:not([hidden]) .login-submit:enabled) .bearer .rest { opacity: 0; }
+body:has(#play:enabled, .login-form:not([hidden]) .login-submit:enabled) .bearer .lit { opacity: 1; }
+body:has(#play:enabled, .login-form:not([hidden]) .login-submit:enabled) .bearer .light { opacity: .56; }
+body:has(#play:enabled, .login-form:not([hidden]) .login-submit:enabled) .spill { opacity: .9; }
+body:has(#play:enabled, .login-form:not([hidden]) .login-submit:enabled) .reliquary::after { opacity: 1; }
+body:has(#play:enabled, .login-form:not([hidden]) .login-submit:enabled) .bearer .flick { animation: flicker 3.7s steps(1, end) infinite; }
+body:has(#play:enabled, .login-form:not([hidden]) .login-submit:enabled) .bearer-r .flick { animation-duration: 4.3s; animation-delay: -1.3s; }
 @keyframes flicker {
   0% { opacity: 1; filter: brightness(1); } 9% { opacity: .97; filter: brightness(.985); } 17% { opacity: .995; filter: brightness(1.02); }
   26% { opacity: .95; filter: brightness(.975); } 34% { opacity: .985; filter: brightness(1.01); } 47% { opacity: 1; filter: brightness(1.03); }

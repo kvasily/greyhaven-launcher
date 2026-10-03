@@ -54,6 +54,39 @@ h1 { margin: 0; font: 600 52px/1 Georgia, "Times New Roman", serif; letter-spaci
 .play:hover:not(:disabled) { background: linear-gradient(180deg, #f0cf85, #c9a257); }
 .play:disabled { border-color: #ffffff22; background: #2a2e31; color: #6d675c; box-shadow: none; cursor: default; }
 
+/* The login view (launcher.js fills #login): a panel under the news, over Play's corner of the bar.
+   (This page has no chooser.css, so it hides Play itself while logged out.) */
+html[data-play="hidden"] #play { display: none; }
+html[data-front="login"] .frame { grid-template-rows: minmax(0, 1fr) auto auto; }
+html[data-front="login"] .news { min-height: 0; }
+.login { grid-column: 2; grid-row: 2; }
+.login-form { display: flex; flex-direction: column; gap: 10px; padding: 16px 20px 14px; background: var(--panel); border: 1px solid var(--line); backdrop-filter: blur(6px); }
+.login-title { margin: 0 0 2px; font-size: 12px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; color: var(--gold); }
+.login-field { display: flex; flex-direction: column; gap: 4px; }
+.login-field span { font-size: 12px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+.login-field input { height: 38px; padding: 0 10px; border: 1px solid #ffffff2e; border-radius: 2px; background: #0b0f12cc; color: var(--ink); font-size: 15px; user-select: text; }
+.login-field input:focus { outline: none; border-color: var(--gold); box-shadow: 0 0 0 1px var(--gold); }
+.login-rule { margin: 0; font-size: 12.5px; color: var(--muted); }
+.login-error { margin: 0; font-size: 13px; color: var(--bad); user-select: text; }
+/* the submit carries Play's weight: the same gold bar */
+.login-submit { height: 48px; margin-top: 4px; border: 1px solid var(--gold-hi); background: linear-gradient(180deg, #e2bf73, #b8924a); color: #1d170c; font: 700 16px/1 Georgia, serif; letter-spacing: .16em; text-transform: uppercase; cursor: pointer; box-shadow: 0 10px 30px #0008, inset 0 1px 0 #fff6; white-space: nowrap; }
+.login-submit:hover:not(:disabled) { background: linear-gradient(180deg, #f0cf85, #c9a257); }
+.login-submit:disabled { border-color: #ffffff22; background: #2a2e31; color: #a39d90; box-shadow: none; cursor: default; }
+.login-switch, .login-signout { align-self: center; min-height: 28px; padding: 2px 6px; border: 0; background: none; color: var(--muted); font-size: 13px; cursor: pointer; text-decoration: underline 1px #ffffff33; text-underline-offset: 3px; }
+.login-switch:hover, .login-signout:hover { color: var(--ink); text-decoration-color: var(--gold); }
+.play:focus-visible, .login-submit:focus-visible, .login-switch:focus-visible, .login-signout:focus-visible { outline: 2px solid var(--gold-hi); outline-offset: 2px; }
+.login-signed { display: flex; align-items: center; justify-content: flex-end; gap: 10px; color: var(--muted); font-size: 13px; }
+.login-account { margin: 0; }
+.login-account b { color: var(--ink); font-weight: 600; }
+#login[data-state="checking"] .login-form { opacity: .75; }
+
+@media (max-width: 1080px) {
+  html[data-front="login"] .frame { grid-template-rows: auto minmax(0, 1fr) auto auto; }
+  .login { grid-column: 1; grid-row: 3; justify-self: end; width: min(380px, 100%); }
+  html[data-front="login"][data-auth="out"] .frame { grid-template-columns: 1fr minmax(300px, 380px); grid-template-rows: auto minmax(0, 1fr) auto; }
+  html[data-front="login"][data-auth="out"] .news { grid-column: 1; grid-row: 2; }
+  html[data-front="login"][data-auth="out"] .login { grid-column: 2; grid-row: 1 / 3; align-self: end; width: auto; }
+}
 @media (max-width: 1080px) {
   .frame { grid-template-columns: 1fr; grid-template-rows: auto 1fr auto; }
   .news { grid-column: 1; grid-row: 2; }

@@ -1,7 +1,7 @@
 {
   "name": "greyhaven-launcher",
   "productName": "Greyhaven",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "The Greyhaven launcher: news, shard status and Play; keeps itself up to date.",
   "author": "Greyhaven",
   "private": true,
@@ -28,6 +28,7 @@
       "preload.cjs",
       "rotation.cjs",
       "nav.cjs",
+      "auth.cjs",
       "shard.json",
       "app/**",
       "build/icon.png"

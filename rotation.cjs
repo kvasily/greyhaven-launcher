@@ -7,7 +7,9 @@ function normalPrefs(raw, ids, available) {
   const p = raw && typeof raw === 'object' ? raw : {}
   const pinned = typeof p.pinned === 'string' && ids.includes(p.pinned) && available(p.pinned) ? p.pinned : null
   const next = Number.isInteger(p.next) && p.next >= 0 ? p.next % ids.length : 0
-  return { pinned, next }
+  // The front page: the login view (the default) or the Play view (the gear switches them).
+  const front = p.front === 'play' ? 'play' : 'login'
+  return { pinned, next, front }
 }
 function pickSkin(raw, ids, available) {
   const prefs = normalPrefs(raw, ids, available)

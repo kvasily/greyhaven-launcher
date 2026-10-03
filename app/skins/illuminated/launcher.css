@@ -188,6 +188,102 @@ button { font: inherit; }
 .play[data-mode="update"]:disabled::before { background-image: url(art/seal-cracked.png); }
 .play[data-mode="download"]::before { background-image: url(art/seal-wax.png); width: 66px; height: 66px; left: -52px; }
 
+/* ------------------------------------------------------------------ the login (launcher.js fills #login) */
+/* Logged out it is the last entry on the recto — a rubric, then the name and password written on
+   ruled lines — and its submit hangs from the ribbon where Play hangs. The chronicle ends above it
+   (anchored to its top, so an error of any length pushes the chronicle up rather than under it). */
+.login {
+  position: absolute; z-index: 4; left: 55.65%; width: 33.1%; bottom: calc(9.4% - 112px);
+  anchor-name: --login;
+}
+html[data-front="login"] .recto { height: auto; bottom: 30%; }
+@supports (anchor-name: --a) { html[data-front="login"] .recto { bottom: calc(anchor(--login top, 30%) + clamp(8px, 1.6cqh, 14px)); } }
+
+.login-form { position: relative; display: flex; flex-direction: column; gap: clamp(2px, .6cqh, 6px); }
+.login-title {
+  margin: 0 0 2px; text-align: center; color: var(--rubric-deep);
+  font-size: clamp(15px, 1.45cqw, 18px); font-weight: 600; font-variant: small-caps; text-transform: lowercase; letter-spacing: .24em;
+  display: flex; align-items: center; justify-content: center; gap: .7em;
+}
+.login-title::before, .login-title::after { content: ""; width: .7em; height: .7em; background: url(art/mark-gilt.png) center / contain no-repeat; }
+/* name and password written on the page's ruled lines; a vermilion rule where the pen is */
+.login-field { display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: end; gap: 10px; padding-left: 1.35em; position: relative; }
+.login-field::before { content: "¶"; position: absolute; left: 0; bottom: 6px; font-size: 1.3em; line-height: 1; font-weight: 700; color: var(--rubric-deep); }
+.login-field:nth-of-type(2)::before { color: var(--lapis); }
+.login-field span { min-width: 6.4em; padding-bottom: 8px; font-size: clamp(15px, 1.35cqw, 16px); font-style: italic; color: var(--ink-soft); white-space: nowrap; }
+.login-field input {
+  width: 100%; height: 38px; padding: 8px 4px 4px; border: 0; border-radius: 0;
+  background: linear-gradient(#0000 calc(100% - 1px), #4a342499 0);
+  color: var(--ink); font: 600 17px/1 var(--serif); letter-spacing: .02em; user-select: text; caret-color: var(--rubric);
+}
+.login-field input:focus { outline: none; background: linear-gradient(#e9c98a33, #e9c98a33), linear-gradient(#0000 calc(100% - 2.5px), var(--rubric) 0); }
+.login-rule { margin: 2px 0 0 1.35em; font-size: clamp(14px, 1.3cqw, 15px); font-style: italic; line-height: 1.35; color: var(--ink-soft); }
+/* a marginal Nota, as on the verso */
+.login-error { margin: 2px 0 0 1.35em; font-size: clamp(14px, 1.3cqw, 15.5px); font-style: italic; line-height: 1.4; color: #66120a; user-select: text; } /* (darker than the verso's Nota: the recto's foot is dimmer) */
+.login-error::before { content: "Nota. "; font-style: normal; font-variant: small-caps; text-transform: lowercase; letter-spacing: .08em; font-weight: 700; }
+
+/* the submit: Play's gilt tab, hung from the ribbon below the page */
+.login-submit {
+  position: relative; align-self: center; margin-top: calc(2.6cqh + 50px); height: 62px; min-width: 250px; padding: 0 30px 4px;
+  border: solid transparent; border-width: 0 34px; border-image: url(art/plaque.png) 0 120 fill / 0 60px stretch;
+  background: none; color: var(--gilt); cursor: pointer;
+  font: 700 20px/1 var(--serif); letter-spacing: .24em; text-transform: uppercase; text-indent: .24em; white-space: nowrap;
+  text-shadow: 0 -1px 0 #0b1430cc, 0 1px 0 #ffffff1f, 0 0 12px #f3c76a40;
+  filter: drop-shadow(0 6px 10px #0009);
+  transition: filter .25s ease, color .25s ease, transform .12s ease;
+}
+.login-form:has(.login-confirm:not([hidden])) .login-submit { font-size: 17px; letter-spacing: .1em; text-indent: .1em; }
+.login-submit:hover:not(:disabled) { color: #fff0c2; filter: drop-shadow(0 6px 12px #0009) drop-shadow(0 0 14px #ffc96a55) brightness(1.12) saturate(1.08); }
+.login-submit:active:not(:disabled) { transform: translateY(1px); filter: drop-shadow(0 3px 6px #0009) brightness(.97); }
+.login-submit:focus-visible { outline: 2px solid #ffe08f; outline-offset: 4px; border-radius: 12px; }
+.login-submit:disabled { cursor: default; color: #a9adb3; border-image-source: url(art/plaque-dull.png); text-shadow: 0 -1px 0 #0008; filter: drop-shadow(0 4px 8px #0008); }
+/* the ribbon dims with whichever tab hangs from it */
+html[data-play="hidden"] .bookmark .ribbon { filter: none; }
+html[data-play="hidden"] body:has(.login-form:not([hidden]) .login-submit:disabled) .ribbon,
+html[data-play="hidden"] body:has(.login-form[hidden]) .ribbon { filter: brightness(.62) saturate(.55); }
+
+/* Make an account / Log in: written on the lectern beside the tab, in candlelit gilt */
+.login-switch {
+  position: absolute; left: calc(50% + 139px); bottom: 31px; transform: translateY(50%); width: max-content; max-width: 150px;
+  padding: 3px 4px; border: 0; background: none; cursor: pointer; text-align: left;
+  font: italic 15px/1.25 var(--serif); color: #e2cc9c; text-shadow: 0 1px 2px #000, 0 0 8px #000;
+  text-decoration: underline 1px #e2cc9c66; text-underline-offset: 3px;
+}
+/* (beside the tab whatever its width: Make the account is the longer one) */
+@supports (anchor-name: --a) {
+  .login-submit { anchor-name: --login-submit; }
+  .login-switch { left: calc(anchor(--login-submit right, 50%) + 14px); top: calc(anchor(--login-submit top, 0px) + 31px); bottom: auto; transform: translateY(-50%); }
+}
+/* (a narrow window: the longer tab is slimmer and the words wrap, so both stay on the lectern) */
+@media (max-width: 1100px) {
+  .login-form:has(.login-confirm:not([hidden])) .login-submit { padding: 0 16px 4px; }
+  .login-switch { max-width: 124px; }
+}
+.login-switch:hover { color: var(--gilt); text-decoration-color: var(--gilt); }
+.login-switch:focus-visible { outline: 2px solid #ffe08f; outline-offset: 2px; border-radius: 3px; }
+
+/* a launcher update while logged out: Update takes the ribbon, so the whole entry stays on the page */
+html[data-front="login"][data-auth="out"][data-play="shown"] .login { bottom: 11.5%; }
+html[data-front="login"][data-auth="out"][data-play="shown"] .login-submit { margin-top: 4px; height: 52px; min-width: 210px; font-size: 18px; border-image-width: 0 50px; }
+html[data-front="login"][data-auth="out"][data-play="shown"] .login-switch { position: static; transform: none; align-self: center; max-width: none; color: var(--ink-soft); text-shadow: none; text-decoration-color: #4a342466; }
+html[data-front="login"][data-auth="out"][data-play="shown"] .login-switch:hover { color: var(--rubric); text-decoration-color: var(--rubric); }
+
+/* logged in: a rubricated line at the foot of the page, above the ribbon */
+html[data-front="login"][data-auth="in"] .login { bottom: 11%; }
+.login-signed { display: flex; align-items: baseline; justify-content: center; flex-wrap: wrap; gap: 0 10px; font-size: clamp(15px, 1.35cqw, 16px); font-style: italic; color: var(--ink-soft); }
+.login-account { margin: 0; }
+.login-account b { font-style: normal; font-weight: 700; color: var(--ink); }
+.login-account b::first-letter { color: var(--lapis); }
+.login-signed::before { content: ""; order: 1; align-self: center; width: .62em; height: .62em; background: url(art/mark-gilt.png) center / contain no-repeat; }
+.login-signout { order: 2; padding: 2px 4px; min-height: 26px; border: 0; background: none; cursor: pointer; font: inherit; color: #6a1209;
+  text-decoration: underline 1px #6a120966; text-underline-offset: 3px; }
+.login-signout:hover { color: var(--rubric); text-decoration-color: var(--rubric); }
+.login-signout:focus-visible { outline: 2px solid var(--rubric); outline-offset: 1px; border-radius: 2px; }
+#login[data-state="checking"] .login-form { opacity: .75; }
+/* offline: the entry's rubrics fade with the rest */
+body:has(#status[data-state="offline"]) .login-title { color: #5e3226; }
+body:has(#status[data-state="offline"]) .login-title::before, body:has(#status[data-state="offline"]) .login-title::after { opacity: .5; }
+
 /* ------------------------------------------------------------------ offline: the ink fades */
 body:has(#status[data-state="offline"]) .book-art { filter: brightness(.82) saturate(.6) sepia(.14); }
 body:has(#status[data-state="offline"]) .scene { filter: brightness(.7) saturate(.8); }

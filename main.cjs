@@ -12,13 +12,18 @@
 //  - The front page's art: five designs (app/skins/<name>/), a different one each launch, or the
 //    one you pin with the gear in the corner (app/shared/chooser.js). Kept in launcher.json in the
 //    launcher's data folder.
+//  - The front page logs you in (the login view, the default): account name and password, or a
+//    new account, then Play opens the game at your characters. The login is remembered (login.dat
+//    in the data folder, its token encrypted by the operating system) until Switch account here
+//    or Log out in the game. The gear switches back to the Play view, where the game logs in.
 //  - On a Mac the launcher isn't signed by Apple, and macOS only installs updates into signed apps:
 //    there it finds an update the same way, and Play becomes Download, which opens the release page.
-const { app, BrowserWindow, ipcMain, shell, Menu } = require('electron')
+const { app, BrowserWindow, ipcMain, shell, Menu, safeStorage } = require('electron')
 const path = require('node:path')
 const fs = require('node:fs')
 const { normalPrefs, pickSkin } = require('./rotation.cjs')
 const { navDecision } = require('./nav.cjs')
+const auth = require('./auth.cjs')
 
 let autoUpdater = null
 try { ({ autoUpdater } = require('electron-updater')) } catch { autoUpdater = null }
@@ -35,7 +40,7 @@ const SKINS = [
 const FALLBACK_PAGE = path.join(__dirname, 'app', 'index.html')
 const skinPage = id => path.join(__dirname, 'app', 'skins', id, 'index.html')
 const known = id => SKINS.some(s => s.id === id) && fs.existsSync(skinPage(id))
-// { pinned: id | null, next: index } in the launcher's data folder.
+// { pinned: id | null, next: index, front: 'login' | 'play' } in the launcher's data folder.
 const prefsFile = () => path.join(app.getPath('userData'), 'launcher.json')
 function readPrefs() {
   let raw = null
@@ -43,7 +48,7 @@ function readPrefs() {
   return normalPrefs(raw, SKINS.map(s => s.id), known)
 }
 function writePrefs(p) { try { fs.writeFileSync(prefsFile(), JSON.stringify(p)) } catch { /* kept for this launch only */ } }
-let prefs = { pinned: null, next: 0 }
+let prefs = { pinned: null, next: 0, front: 'login' }
 let skin = null // the design showing this launch
 // Each launch: the pinned design, or the next one in turn (a missing folder is skipped).
 function chooseSkin() {
@@ -74,12 +79,11 @@ const inGame = () => !!win && !win.isDestroyed() && win.webContents.getURL().sta
 
 function openLauncher(query) {
   if (!win || win.isDestroyed()) return
+  handoff = null
   void win.loadFile(launcherPage(), query ? { query } : undefined)
   // Back from the game: look for a launcher update now (it must be installed before Play).
   void checkForUpdates()
 }
-// The game sends you back here (src/updates.ts) when it was updated or the shard restarts for an
-// update: it goes to <shard>/__launcher?reason=…, which never loads.
 // The game sends you back here (reason=update or restart, src/updates.ts; reason=menu, its Esc
 // menu's Return to launcher) or closes the launcher (/__quit, Quit game): nav.cjs. Launchers before
 // 1.0.5 don't know menu or quit, so the game only offers them when its address has ?launcher=2.
@@ -88,6 +92,9 @@ function openLauncher(query) {
 let gameLoading = false
 function openGame() {
   if (!win || win.isDestroyed()) return
+  // (The login view: the game page takes this login once as it opens, launcher:handoff.)
+  gameFront = prefs.front
+  handoff = gameFront === 'login' && login ? login.token : null
   gameLoading = true
   void win.loadURL(`${SHARD}/?launcher=2`).catch(() => {}).finally(() => { gameLoading = false })
 }
@@ -108,18 +115,19 @@ function createWindow() {
     if (go.kind === 'open') return
     event.preventDefault()
     if (go.kind === 'quit') app.quit()
-    else if (go.kind === 'back') openLauncher(go.notice ? { notice: go.notice } : undefined)
+    else if (go.kind === 'back') { if (go.forget) void signOut(); openLauncher(go.notice ? { notice: go.notice } : undefined) }
     else if (go.url) void shell.openExternal(go.url)
   })
   win.webContents.setWindowOpenHandler(({ url }) => { if (/^https?:/.test(url)) void shell.openExternal(url); return { action: 'deny' } })
   // The shard unreachable when Play is pressed: back to the launcher, saying so.
   win.webContents.on('did-fail-load', (_event, code, description, url, isMainFrame) => {
     if (!isMainFrame || !/^https?:/.test(url) || code === -3) return
+    handoff = null
     void win.loadFile(launcherPage(), { query: { error: `Could not reach the shard (${description}).` } })
   })
   // The shard answered, but with an error page (a 403, a 404 for a missing build): back, saying so.
   win.webContents.on('did-navigate', (_event, url, code) => {
-    if (/^https?:/.test(url) && code >= 400) void win.loadFile(launcherPage(), { query: { error: `The shard answered ${code} for the game page.` } })
+    if (/^https?:/.test(url) && code >= 400) { handoff = null; void win.loadFile(launcherPage(), { query: { error: `The shard answered ${code} for the game page.` } }) }
   })
   win.webContents.on('before-input-event', (event, input) => {
     if (input.type !== 'keyDown') return
@@ -133,7 +141,7 @@ function createWindow() {
 }
 
 // What the launcher's page asks for (preload.cjs).
-ipcMain.handle('launcher:info', () => ({ version: app.getVersion(), shard: SHARD, update }))
+ipcMain.handle('launcher:info', () => ({ version: app.getVersion(), shard: SHARD, update, front: prefs.front, account: login ? login.account : null }))
 ipcMain.handle('launcher:status', async () => {
   try {
     const response = await fetch(`${SHARD}/status`, { signal: AbortSignal.timeout(5000), cache: 'no-store' })
@@ -148,7 +156,15 @@ ipcMain.handle('launcher:restart', () => { if (autoUpdater && update.state === '
 ipcMain.handle('launcher:check', () => { void checkForUpdates() })
 // The front page's designs (the gear): which there are, which is showing, which is pinned. Pinning
 // another design shows it now; Rotate (null) keeps this one until the next launch.
-ipcMain.handle('launcher:skins', () => ({ skins: SKINS.filter(s => known(s.id)), current: skin, pinned: prefs.pinned }))
+ipcMain.handle('launcher:skins', () => ({ skins: SKINS.filter(s => known(s.id)), current: skin, pinned: prefs.pinned, front: prefs.front }))
+// The front page's view (the gear): 'login' (the default) or 'play'. Shown at once.
+ipcMain.handle('launcher:front', (_event, mode) => {
+  const front = mode === 'play' ? 'play' : 'login'
+  prefs = { ...readPrefs(), front }
+  writePrefs(prefs)
+  if (win && !win.isDestroyed() && !inGame() && !gameLoading) void win.loadFile(launcherPage())
+  return { front }
+})
 ipcMain.handle('launcher:pin', (_event, id) => {
   const pinned = typeof id === 'string' && known(id) ? id : null
   prefs = { ...readPrefs(), pinned }
@@ -161,6 +177,72 @@ ipcMain.handle('launcher:pin', (_event, id) => {
     void win.loadFile(launcherPage(), query && Object.keys(query).length ? { query } : undefined)
   }
   return { current: skin, pinned }
+})
+// --- The login view ------------------------------------------------------------------------
+// The login kept between launches. Only this process holds the token: the front page hears the
+// account name, never the token; the game page is handed it once as Play opens it.
+let login = null, handoff = null, gameFront = 'play'
+// Logouts the shard didn't hear (it was offline): sent again when the front page next asks.
+const unsent = []
+const loginFile = () => path.join(app.getPath('userData'), 'login.dat')
+const canKeep = () => { try { return safeStorage.isEncryptionAvailable() } catch { return false } }
+function loadLogin() {
+  if (!canKeep()) return
+  try { login = auth.readSaved(fs.readFileSync(loginFile(), 'utf8'), b => safeStorage.decryptString(b)) } catch { login = null }
+}
+function keepLogin(next) {
+  login = next
+  // (Without the system's encryption it lasts this launch only: nothing is written in the clear.)
+  if (canKeep()) try { fs.writeFileSync(loginFile(), auth.writeSaved(next, s => safeStorage.encryptString(s))) } catch { /* this launch only */ }
+}
+function forgetLogin() { login = null; handoff = null; try { fs.unlinkSync(loginFile()) } catch { /* none kept */ } }
+// Logged out here: forgotten at once, and the shard told (later, should it be offline).
+async function signOut() {
+  const kept = login
+  forgetLogin()
+  if (kept) unsent.push(kept.token)
+  await sendLogouts()
+}
+async function sendLogouts() {
+  for (const token of unsent.splice(0)) {
+    const r = await auth.ask(SHARD, { t: 'logout', token }, { timeout: 5000 })
+    if (!r.ok) unsent.push(token)
+  }
+}
+// Who is logged in: checked with the shard (a login it no longer takes is forgotten). One it
+// couldn't ask (offline, or a launcher too old for the shard) stays, unchecked.
+const unanswered = error => /offline|did not answer|cannot reach|different version/i.test(String(error))
+ipcMain.handle('launcher:account', async () => {
+  if (unsent.length) void sendLogouts()
+  if (!login) return { account: null }
+  const kept = login, r = await auth.ask(SHARD, { t: 'resume', token: kept.token }, { timeout: 8000 })
+  if (r.ok) return { account: kept.account }
+  if (unanswered(r.error)) return { account: kept.account, unchecked: true }
+  if (login === kept) forgetLogin()
+  return { account: null, error: r.error === 'Please log in again.' ? 'Your login has run out: please log in again.' : r.error }
+})
+ipcMain.handle('launcher:login', async (_event, form) => {
+  const f = form && typeof form === 'object' ? form : {}
+  const mode = f.mode === 'register' ? 'register' : 'login'
+  const refused = auth.checkForm(mode, f.name, f.password, f.confirm)
+  if (refused) return { ok: false, error: refused }
+  const r = await auth.ask(SHARD, { t: mode, name: String(f.name).trim(), password: String(f.password) })
+  if (!r.ok) return { ok: false, error: r.error }
+  keepLogin({ account: r.account, token: r.token })
+  return { ok: true, account: r.account }
+})
+ipcMain.handle('launcher:signout', async () => { await signOut(); return { ok: true } })
+// The game page (only the shard's, in this window's main frame) asks how it was opened: from the
+// login view (front 'login', with the login the first time it asks: a reload keeps the one it
+// took) or the Play view.
+ipcMain.handle('launcher:handoff', event => {
+  const frame = event.senderFrame
+  let origin = null
+  try { origin = new URL(frame.url).origin } catch { origin = null }
+  if (!win || win.isDestroyed() || event.sender !== win.webContents || !frame || frame !== win.webContents.mainFrame || frame.parent || origin !== SHARD) return null
+  const token = handoff
+  handoff = null
+  return token ? { front: gameFront, token } : { front: gameFront }
 })
 // A Mac's update: the release page, to download the new launcher.
 ipcMain.handle('launcher:download', () => { void shell.openExternal(RELEASES) })
@@ -200,6 +282,6 @@ function watchUpdates() {
 if (!app.requestSingleInstanceLock()) app.quit()
 else {
   app.on('second-instance', () => { if (win) { if (win.isMinimized()) win.restore(); win.focus() } })
-  app.whenReady().then(() => { chooseSkin(); createWindow(); watchUpdates() })
+  app.whenReady().then(() => { chooseSkin(); loadLogin(); createWindow(); watchUpdates() })
   app.on('window-all-closed', () => app.quit())
 }

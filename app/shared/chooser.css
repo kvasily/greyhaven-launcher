@@ -22,6 +22,20 @@
 .gh-chooser h2 { margin: 0 0 2px; font-size: 15px; letter-spacing: .14em; text-transform: uppercase; color: #e8c878; font-weight: 600; }
 .gh-chooser > p { margin: 0 0 12px; color: #b8ac94; font-size: 13px; }
 .gh-chooser .gh-chooser-preview { margin: 10px 0 0; font-style: italic; }
+.gh-chooser h2 + p + .gh-chooser-views + h2 { margin-top: 16px; }
+.gh-chooser-views { display: flex; gap: 8px; margin: 0 0 4px; }
+.gh-chooser-view {
+  flex: 1; padding: 7px 10px; border: 1px solid rgba(214, 186, 128, .3); border-radius: 4px;
+  background: rgba(255, 255, 255, .03); color: inherit; font: inherit; font-size: 13px; cursor: pointer;
+}
+.gh-chooser-view:hover { border-color: rgba(214, 186, 128, .6); }
+.gh-chooser-view[aria-pressed="true"] { border-color: #e8c878; box-shadow: inset 0 0 0 1px #e8c878; background: rgba(232, 200, 120, .1); color: #f1dca6; }
+.gh-chooser-view:focus-visible { outline: 2px solid #e8c878; outline-offset: 2px; }
+
+/* The login view (launcher.js): what every design shares. Each design styles its own form (its
+   #login slot); these only hide what the view leaves out. */
+html[data-play="hidden"] #play { display: none !important; }
+#login[hidden], #login [hidden] { display: none !important; }
 .gh-chooser-list { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
 .gh-chooser-option {
   display: flex; flex-direction: column; align-items: stretch; gap: 4px; padding: 6px; margin: 0;

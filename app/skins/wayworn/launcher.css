@@ -175,6 +175,65 @@ html[data-presence="low"] .brand.ui { opacity: .5; }
 .version { align-self: center; margin-top: -2px; font: 12.5px/1.2 var(--label); letter-spacing: .04em; color: var(--ash); cursor: pointer; text-shadow: 0 1px 4px #000; transition: color 160ms ease; }
 .version:hover { color: var(--bone); text-decoration: underline dotted rgba(207, 196, 168, .5); text-underline-offset: 3px; }
 
+/* ------------------------------------------------------------------ the login (launcher.js fills #login) */
+/* Logged out it stands where Play stands: a soot placard, the same thin iron edge as the notices,
+   and the Play plate itself for its submit, so logging in carries Play's weight. */
+.login-form { position: relative; display: flex; flex-direction: column; gap: 10px; padding: 0 6px 2px;
+  border: 16px solid transparent; border-image: url("art/placard-edge.png") 32 / 16px stretch;
+  background: linear-gradient(180deg, rgba(27, 26, 24, .78), rgba(18, 17, 16, .62)), url("art/soot.png") 0 0 / 256px 256px;
+  background-clip: padding-box; box-shadow: 0 18px 50px rgba(0, 0, 0, .55); }
+.login-title { margin: 2px 0 0; padding: 0 0 8px; font: 600 15px/1.2 var(--serif); font-variant: small-caps; letter-spacing: .16em; color: var(--bone);
+  border-bottom: 1px solid rgba(207, 196, 168, .10); }
+.login-field { display: flex; flex-direction: column; gap: 5px; }
+.login-field span { font: 600 12px/1 var(--label); letter-spacing: .16em; text-transform: uppercase; color: var(--warm); }
+/* the fields: wells sunk in dark iron, an ember along the rim when the cursor is in them */
+.login-field input { height: 38px; width: 100%; padding: 0 11px; border: 1px solid #45423c; border-top-color: #0b0b0a; border-radius: 2px;
+  background: linear-gradient(180deg, #0b0b0a, #191816 70%, #1f1e1b); color: var(--bone); font: 16px/1 var(--serif); letter-spacing: .02em;
+  box-shadow: inset 0 2px 6px rgba(0, 0, 0, .75), 0 1px 0 rgba(207, 196, 168, .06); user-select: text; caret-color: rgb(var(--ember)); }
+.login-field input:focus { outline: none; border-color: rgba(var(--ember), .85); box-shadow: inset 0 2px 6px rgba(0, 0, 0, .75), 0 0 0 1px rgba(var(--ember), .5), 0 0 12px rgba(var(--ember), .28); }
+.login-rule { margin: -2px 0 0; font: italic 13px/1.4 var(--serif); color: var(--warm); }
+/* a burnt edge rather than the vellum scrap: it belongs to the placard, not to the shard */
+.login-error { margin: 0; padding: 1px 0 1px 10px; border-left: 2px solid #8a3a30; font: italic 14.5px/1.4 var(--serif); color: #e2a58f; user-select: text; }
+
+.login-submit { position: relative; isolation: isolate; display: block; width: 100%; height: 58px; margin-top: 4px; padding: 0 48px 2px; border: 0; background: none; cursor: pointer;
+  font: 600 19px/1 var(--serif); letter-spacing: .3em; text-indent: .3em; text-transform: uppercase; color: #d9cdb0;
+  text-shadow: 0 -1px 0 rgba(0, 0, 0, .95), 0 1px 0 rgba(255, 228, 190, .10); transition: color 180ms ease, text-shadow 180ms ease, transform 120ms ease; }
+.login-submit::before { content: ""; position: absolute; inset: 0; z-index: -2; border: solid transparent; border-width: 0 44px;
+  border-image: url("art/play.png") 0 96 fill / 0 44px stretch; filter: brightness(.9) drop-shadow(0 8px 14px rgba(0, 0, 0, .7)); transition: filter 220ms ease; }
+.login-submit::after { content: ""; position: absolute; z-index: -1; left: 15px; right: 15px; top: 11px; bottom: 11px; border-radius: 3px; pointer-events: none;
+  background: radial-gradient(64% 150% at 50% 118%, rgba(var(--ember), .95), rgba(var(--ember), .34) 42%, rgba(var(--ember), .08) 68%, transparent 82%);
+  mix-blend-mode: screen; opacity: .5; transition: opacity 200ms ease; }
+/* (Make the account is twice as long as Log in: tighter, and never on two lines) */
+.login-submit { white-space: nowrap; }
+.login-form:has(.login-confirm:not([hidden])) .login-submit { font-size: 17px; letter-spacing: .16em; text-indent: .16em; }
+.login-submit:not(:disabled)::after { animation: smoulder 4.6s ease-in-out infinite alternate; }
+.login-submit:hover:not(:disabled) { color: #f0d2a0; text-shadow: 0 -1px 0 rgba(0, 0, 0, .9), 0 0 16px rgba(var(--ember), .55); }
+.login-submit:hover:not(:disabled)::after { opacity: 1; animation: none; }
+.login-submit:hover:not(:disabled)::before { filter: brightness(1.06) drop-shadow(0 8px 14px rgba(0, 0, 0, .7)) drop-shadow(0 0 9px rgba(var(--ember), .38)); }
+.login-submit:active:not(:disabled) { transform: translateY(1px); }
+.login-submit:focus-visible { outline: none; }
+.login-submit:focus-visible::before { filter: brightness(1.02) drop-shadow(0 0 1px rgba(232, 214, 176, 1)) drop-shadow(0 0 1px rgba(232, 214, 176, .9)); }
+/* cold iron: offline, asking the shard, or on its way */
+.login-submit:disabled { cursor: default; color: #8f897d; text-shadow: 0 -1px 0 rgba(0, 0, 0, .9); }
+.login-submit:disabled::before { filter: saturate(.15) brightness(.66) drop-shadow(0 8px 14px rgba(0, 0, 0, .6)); }
+.login-submit:disabled::after { opacity: 0; }
+
+/* the small words: Make an account / Switch account — chalk on the stone, underlined on approach */
+.login-switch, .login-signout { align-self: center; min-height: 28px; padding: 2px 6px; border: 0; background: none; cursor: pointer;
+  font: italic 14px/1.2 var(--serif); color: var(--warm); text-decoration: underline dotted rgba(163, 157, 144, .45); text-underline-offset: 3px; transition: color 160ms ease; }
+.login-switch:hover, .login-signout:hover { color: var(--bone); text-decoration-color: rgba(207, 196, 168, .8); }
+.login-switch:focus-visible, .login-signout:focus-visible { outline: 1px solid rgba(232, 214, 176, .85); outline-offset: 1px; border-radius: 2px; color: var(--bone); }
+
+/* logged in: who you are, one quiet line above Play */
+.login-signed { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 2px 8px; padding: 0 4px;
+  font: 14.5px/1.3 var(--serif); color: var(--warm); text-shadow: 0 1px 6px #000; }
+.login-account { margin: 0; }
+.login-account b { font-weight: 600; font-variant: small-caps; letter-spacing: .06em; color: var(--bone); }
+.login-signed::before { content: ""; order: 1; width: 3px; height: 3px; border-radius: 50%; background: var(--ash-dim); }
+.login-signout { order: 2; }
+/* still asking the shard whether the kept login holds */
+#login[data-state="checking"] .login-form { opacity: .72; }
+
 /* ------------------------------------------------------------------ the shard is down: the fire goes out */
 body:has(#status[data-state="offline"]) .paint-cold { opacity: 1; }
 body:has(#status[data-state="offline"]) .door-fire { opacity: 0; }
@@ -191,6 +250,18 @@ body:has(#status[data-state="checking"]) .door-fire { opacity: .3; }
   .play { height: 58px; }
   .waystone { gap: 10px; }
   .gate { gap: 8px; }
+  .login-form { gap: 7px; }
+  .login-title { padding-bottom: 6px; }
+  .login-field { gap: 4px; }
+  .login-submit { height: 52px; margin-top: 2px; }
+  /* making an account: the two passwords side by side, so Play (an update) still fits below */
+  .login-form:has(.login-confirm:not([hidden])) { display: grid; grid-template-columns: 1fr 1fr; column-gap: 10px; align-items: end; }
+  .login-form:has(.login-confirm:not([hidden])) > * { grid-column: 1 / -1; min-width: 0; }
+  .login-form:has(.login-confirm:not([hidden])) > .login-field:not(:first-of-type) { grid-column: auto; }
+  html[data-auth="out"] .waystone, html[data-auth="out"] .gate { gap: 7px; }
+  /* the form (making an account, or with an update under it) and a word from the shard are more
+     than the column holds: the scrap is pinned beside the column instead, over the road */
+  html[data-front="login"][data-auth="out"]:is([data-play="shown"], :has(.login-confirm:not([hidden]))) .error { position: absolute; right: calc(100% + 18px); bottom: 70px; width: var(--col); margin: 0; }
 }
 
 @media (prefers-reduced-motion: reduce) {

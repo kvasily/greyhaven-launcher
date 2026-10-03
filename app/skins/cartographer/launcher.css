@@ -295,6 +295,104 @@ button { font: inherit; }
   cursor: default;
 }
 
+/* ------------------------------------------------------------------ the login: a slip pinned over the reach */
+/* Logged out it is pinned where Play lies, under the news, its red wax where Play's is; the notes
+   above give it room (their bottom moves up by the slip's height in each of its shapes). Labels sit
+   on the slip's ruled lines, docket fashion, so it stays short enough for a 600-high window. */
+.login {
+  position: absolute; right: calc(var(--u) * 58); bottom: calc(var(--u) * 58);
+  width: max(300px, calc(var(--u) * 336));
+}
+.login-form {
+  position: relative; display: flex; flex-direction: column; gap: 6px;
+  padding: 18px 20px 12px;
+  border: 0 solid transparent; border-image: url(art/note-b.png) 42 fill / 26px stretch;
+  filter: drop-shadow(0 3px 4px #0009);
+  transform: rotate(-.5deg);
+}
+.login-form::before {   /* the pin */
+  content: ""; position: absolute; left: 50%; top: -6px; width: 26px; height: 26px; margin-left: -13px;
+  background: url(art/pin.png) 0 0 / 100% 100% no-repeat;
+}
+.login-title { margin: 2px 0 2px; font: 600 12.5px/1.2 var(--num); letter-spacing: .16em; text-transform: uppercase; color: var(--ink-2); }
+.login-title::after { content: ""; display: block; width: 34px; margin-top: 5px; border-top: 1px solid #3a2c1e88; }
+.login-field { display: grid; grid-template-columns: 7.1em minmax(0, 1fr); align-items: end; gap: 6px; }
+.login-field span { padding-bottom: 9px; font-size: 14px; white-space: nowrap; font-style: italic; line-height: 1.15; color: var(--ink-2); }
+/* written on the line, not in a box: the ink rule darkens and turns red where the pen is */
+.login-field input {
+  width: 100%; height: 38px; padding: 8px 6px 4px; border: 0; border-radius: 0;
+  background: linear-gradient(#0000 calc(100% - 1.5px), #3a2c1eaa 0);
+  color: var(--ink); font: 600 16px/1 var(--serif); letter-spacing: .02em;
+  user-select: text; caret-color: var(--red-ink);
+}
+.login-field input:focus { outline: none; background: linear-gradient(#b8893f24, #b8893f24), linear-gradient(#0000 calc(100% - 2.5px), var(--red-ink) 0); }
+.login-rule { margin: 0; font-size: 13px; font-style: italic; line-height: 1.35; color: var(--ink-2); }
+.login-error { margin: 2px 0 0; padding-left: 30px; position: relative; color: var(--red-ink); font-size: 14.5px; font-weight: 600; line-height: 1.35; user-select: text; }
+.login-error::before {   /* the same red-ink nota bene as the notices */
+  content: "!"; position: absolute; left: 2px; top: 0; width: 19px; height: 19px; border-radius: 50%; border: 1.5px solid var(--red-ink);
+  display: grid; place-items: center; font: 700 12px/1 var(--serif);
+}
+
+/* the submit: Play's slab of red wax, poured at the foot of the slip */
+.login-submit {
+  align-self: center; position: relative; min-width: max(220px, calc(var(--u) * 252)); height: max(50px, calc(var(--u) * 60));
+  margin: 6px 0 0; padding: 0 40px 2px;
+  background: none; border: 0 solid transparent; border-image: url(art/wax.png) 0 66 fill / 0 44px stretch;
+  color: var(--wax-text); font: 700 18px/1 var(--serif); letter-spacing: .2em; text-transform: uppercase; white-space: nowrap;
+  text-shadow: 0 -1px 0 #2a0402, 0 1px 0 #ff9b7a40;
+  filter: drop-shadow(0 4px 5px #0009) drop-shadow(0 1px 1px #0008);
+  cursor: pointer; transition: filter .35s ease, transform .15s ease;
+}
+.login-form:has(.login-confirm:not([hidden])) .login-submit { letter-spacing: .1em; font-size: 17px; }
+.login-submit:hover:not(:disabled) { filter: brightness(1.16) saturate(1.12) drop-shadow(0 0 14px #ff7a3a70) drop-shadow(0 4px 5px #0009); }
+.login-submit:active:not(:disabled) { transform: translateY(1px) scale(.992); }
+.login-submit:focus-visible { outline: 2px dashed var(--red-ink); outline-offset: 4px; }
+/* not yet: the docket slip in faded ink, as Play */
+.login-submit:disabled { border-image-source: url(art/slip.png); color: var(--ink); text-shadow: none; letter-spacing: .14em; font-weight: 600; filter: drop-shadow(0 2px 2px #0008); cursor: default; }
+
+.login-switch, .login-signout {
+  align-self: center; min-height: 28px; padding: 2px 8px; border: 0; background: none; cursor: pointer;
+  font: italic 14.5px/1.2 var(--serif); color: var(--ink-2);
+  text-decoration: underline 1px #3a2c1e66; text-underline-offset: 3px;
+}
+.login-switch:hover { color: var(--red-ink); text-decoration-color: var(--red-ink); }
+.login-switch:focus-visible { outline: 2px dashed var(--red-ink); outline-offset: 1px; }
+
+/* logged in: who you are, a scrap tucked above the wax */
+.login:has(> .login-signed:not([hidden])) { bottom: calc(var(--u) * 70 + max(50px, calc(var(--u) * 60)) + 6px); width: auto; }
+.login-signed {
+  display: flex; align-items: center; gap: 2px 10px; padding: 3px 14px 3px 16px;
+  border: 0 solid transparent; border-image: url(art/slip.png) 0 66 fill / 0 18px stretch;
+  font-size: 14.5px; font-style: italic; color: var(--ink); filter: drop-shadow(0 2px 2px #0008); transform: rotate(.6deg);
+}
+.login-account { margin: 0; }
+.login-account b { font-style: normal; font-weight: 700; }
+.login-signout { min-height: 26px; padding: 2px 4px; font-size: 14px; }
+.login-signout:hover { color: var(--red-ink); text-decoration-color: var(--red-ink); }
+.login-signout:focus-visible { outline: 2px dashed var(--red-ink); outline-offset: 1px; }
+#login[data-state="checking"] .login-form { opacity: .8; }
+
+/* the news makes room: above the slip while logged out, above the scrap once logged in. Anchored
+   to the slip's top, so an error of any length pushes the notes up rather than under it; the
+   fixed heights are for an engine without anchor positioning. */
+.login { anchor-name: --login; }
+/* an update while logged out: Play (Update) is shown, so the slip stands on it */
+html[data-front="login"][data-auth="out"][data-play="shown"] .login { bottom: calc(var(--u) * 70 + max(50px, calc(var(--u) * 60)) + 4px); }
+/* (squeezed to nothing — a notice, an update and making an account at the smallest window — the
+   notes are clipped short of the slip rather than spill onto it) */
+html[data-front="login"] .news { overflow: clip; overflow-clip-margin: 10px; }
+@supports (anchor-name: --a) {
+  html[data-front="login"] .news { bottom: calc(anchor(--login top, calc(var(--u) * 140 + 52px)) + 12px); }
+}
+@supports not (anchor-name: --a) {
+  html[data-front="login"] .news { bottom: calc(var(--u) * 140 + 22px + 30px); }
+  html[data-front="login"]:not([data-auth="in"]) .news { bottom: calc(var(--u) * 58 + 292px); }
+  html[data-front="login"]:not([data-auth="in"]):has(.login-error:not([hidden])) .news { bottom: calc(var(--u) * 58 + 316px); }
+  html[data-front="login"]:not([data-auth="in"]):has(.login-confirm:not([hidden])) .news { bottom: calc(var(--u) * 58 + 386px); }
+  html[data-front="login"]:not([data-auth="in"]):has(.login-confirm:not([hidden])):has(.login-error:not([hidden])) .news { bottom: calc(var(--u) * 58 + 410px); }
+  html[data-front="login"][data-auth="out"][data-play="shown"] .news { margin-bottom: max(54px, calc(var(--u) * 72)); }
+}
+
 .version {
   position: absolute; right: calc(var(--u) * 66); bottom: calc(var(--u) * 16);
   font: 13.5px/1.2 var(--num); letter-spacing: .05em; color: var(--table-text);
