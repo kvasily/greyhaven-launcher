@@ -17,21 +17,21 @@
   </div>
 
   <div class="stage">
-    <!-- Ornamental frame: columns, gargoyles, lantern-bearers, arch and rose window, candles. -->
+    <!-- Ornamental frame: columns, gargoyles, praying priests, arch and rose window, candles. -->
     <div class="decor" aria-hidden="true">
       <div class="column col-l"><span class="cap"></span><span class="shaft"></span><span class="base"></span></div>
       <div class="column col-r"><span class="cap"></span><span class="shaft"></span><span class="base"></span></div>
 
+      <!-- The gargoyles idle on their capitals (art/gargoyle-idle.webm, rendered from Gargoyle_Statue.blend).
+           The right one is the same loop mirrored and started part-way through, so the two never move together. -->
       <div class="gargoyle garg-l">
         <span class="halo"></span>
-        <img class="layer body" src="art/gargoyle-left.png" alt="">
-        <img class="layer glow" src="art/gargoyle-left-glow.png" alt="">
+        <video class="layer body" src="art/gargoyle-idle.webm" autoplay loop muted playsinline disablepictureinpicture></video>
         <span class="ember"></span>
       </div>
       <div class="gargoyle garg-r">
         <span class="halo"></span>
-        <img class="layer body" src="art/gargoyle-right.png" alt="">
-        <img class="layer glow" src="art/gargoyle-right-glow.png" alt="">
+        <video class="layer body" src="art/gargoyle-idle.webm#t=2.3" autoplay loop muted playsinline disablepictureinpicture></video>
         <span class="ember"></span>
       </div>
 
@@ -47,18 +47,20 @@
       <span class="spill spill-l"></span>
       <span class="spill spill-r"></span>
 
+      <!-- Praying stone priests on their pedestals (art/priest-idle.webm, rendered from Stone_Hooded_Priest.blend).
+           The votive candle at each one's feet is lit when Play is ready. -->
       <div class="bearer bearer-l">
         <div class="flick">
-          <img class="layer rest" src="art/lantern-bearer-left.png" alt="">
-          <img class="layer lit" src="art/lantern-bearer-left-lit.png" alt="">
-          <img class="layer light" src="art/lantern-light-left.png" alt="">
+          <video class="layer rest" src="art/priest-idle.webm" autoplay loop muted playsinline disablepictureinpicture></video>
+          <span class="light"></span>
+          <span class="votive"><span class="halo"></span><img class="flame" src="art/candle-flame.png" alt=""></span>
         </div>
       </div>
       <div class="bearer bearer-r">
         <div class="flick">
-          <img class="layer rest" src="art/lantern-bearer-right.png" alt="">
-          <img class="layer lit" src="art/lantern-bearer-right-lit.png" alt="">
-          <img class="layer light" src="art/lantern-light-right.png" alt="">
+          <video class="layer rest" src="art/priest-idle.webm#t=3.4" autoplay loop muted playsinline disablepictureinpicture></video>
+          <span class="light"></span>
+          <span class="votive"><span class="halo"></span><img class="flame" src="art/candle-flame.png" alt=""></span>
         </div>
       </div>
 

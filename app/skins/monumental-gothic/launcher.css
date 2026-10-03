@@ -1,7 +1,7 @@
 /* Greyhaven launcher — Monumental Gothic skin.
    A cathedral shrine at night: ornament carved into the edges, a clean reliquary of news in the
    middle, Play as an engraved plaque on the altar step. The figures carry the state:
-   rose window = the shard is up; lantern-bearers = Play is ready; gargoyles' eyes = danger. */
+   rose window = the shard is up; the priests' votive candles = Play is ready; gargoyles' eyes = danger. */
 
 @font-face { font-family: "Lora GH"; src: url(fonts/Lora-Variable.ttf) format("truetype"); font-weight: 400 700; font-style: normal; }
 @font-face { font-family: "Lora GH"; src: url(fonts/Lora-Italic-Variable.ttf) format("truetype"); font-weight: 400 700; font-style: italic; }
@@ -73,14 +73,14 @@ img { -webkit-user-drag: none; }
 .gargoyle { top: calc(8 * var(--u)); width: calc(240 * var(--u)); height: calc(240 * var(--u)); }
 .garg-l { left: calc(-46 * var(--u)); }
 .garg-r { right: calc(-46 * var(--u)); }
-.gargoyle .body { filter: brightness(.72) saturate(.85); }
-.gargoyle .glow { mix-blend-mode: screen; opacity: 0; filter: brightness(1.7) saturate(1.3); transition: opacity 900ms var(--ease-mass); }
-.gargoyle .ember { position: absolute; top: calc(57 * var(--u)); width: calc(64 * var(--u)); height: calc(40 * var(--u)); border-radius: 50%;
+.gargoyle .body { filter: brightness(.64) saturate(.8); transition: filter 900ms var(--ease-mass); }
+.garg-r .body { transform: scaleX(-1); }
+.gargoyle .ember { position: absolute; top: calc(22 * var(--u)); width: calc(64 * var(--u)); height: calc(40 * var(--u)); border-radius: 50%;
   background: radial-gradient(closest-side, rgba(255, 80, 34, .6), rgba(160, 24, 12, .18) 60%, transparent);
   mix-blend-mode: screen; opacity: 0; transition: opacity 900ms var(--ease-mass); }
 .garg-l .ember { left: calc(90 * var(--u)); }
 .garg-r .ember { right: calc(90 * var(--u)); }
-.gargoyle .halo { position: absolute; top: calc(-6 * var(--u)); width: calc(200 * var(--u)); height: calc(170 * var(--u)); border-radius: 50%;
+.gargoyle .halo { position: absolute; top: calc(-43 * var(--u)); width: calc(200 * var(--u)); height: calc(170 * var(--u)); border-radius: 50%;
   background: radial-gradient(closest-side, rgba(255, 96, 40, .26), rgba(176, 50, 42, .12) 45%, rgba(107, 26, 22, .04) 70%, transparent);
   mix-blend-mode: plus-lighter; opacity: 0; transition: opacity 1100ms var(--ease-mass); }
 .garg-l .halo { left: calc(22 * var(--u)); }
@@ -96,15 +96,23 @@ img { -webkit-user-drag: none; }
   background: radial-gradient(closest-side, rgba(200, 70, 60, .16), rgba(70, 90, 190, .08) 50%, transparent);
   mix-blend-mode: screen; opacity: 0; transition: opacity 1600ms var(--ease-mass); }
 
-/* lantern-bearers stand in the bays either side of the reliquary */
+/* praying stone priests stand on pedestals in the bays either side of the reliquary */
 .bearer { top: calc(410 * var(--u)); width: calc(192 * var(--u)); height: calc(384 * var(--u)); }
 .bearer-l { left: calc(130 * var(--u)); }
 .bearer-r { right: calc(130 * var(--u)); }
 .bearer .flick { position: absolute; inset: 0; }
-.bearer .rest, .bearer .lit { filter: brightness(.66) saturate(.7) contrast(.96); transition: opacity 1100ms var(--ease-mass); }
-.bearer .lit { opacity: 0; }
-.bearer .light { mix-blend-mode: screen; opacity: 0; transition: opacity 1100ms var(--ease-mass);
-  filter: brightness(.62) sepia(1) saturate(3.2) hue-rotate(-18deg) brightness(1.35); }
+.bearer .rest { filter: brightness(.66) saturate(.7) contrast(1.02); transition: filter 1400ms var(--ease-mass); }
+.bearer-r .flick { transform: scaleX(-1); }
+.bearer .light { position: absolute; left: calc(6 * var(--u)); top: calc(96 * var(--u)); width: calc(250 * var(--u)); height: calc(300 * var(--u)); border-radius: 50%;
+  background: radial-gradient(closest-side, rgba(255, 176, 100, .42), rgba(255, 140, 64, .12) 55%, transparent);
+  mix-blend-mode: screen; opacity: 0; transition: opacity 1100ms var(--ease-mass); }
+/* the votive candle on each pedestal: its flame (the reliquary candles' art, scaled down) sits on the rendered wick */
+.bearer .votive { position: absolute; left: calc(123.6 * var(--u)); top: calc(255 * var(--u)); width: calc(16 * var(--u)); height: calc(43 * var(--u)); }
+.bearer .votive .flame { position: absolute; inset: 0; width: 100%; height: 100%; mix-blend-mode: screen; opacity: 0; transform-origin: 50% 30%;
+  transition: opacity 900ms var(--ease-mass); }
+.bearer .votive .halo { position: absolute; left: calc(-27 * var(--u)); top: calc(-22 * var(--u)); width: calc(70 * var(--u)); height: calc(70 * var(--u)); border-radius: 50%;
+  background: radial-gradient(closest-side, rgba(255, 180, 107, .38), rgba(255, 140, 60, .1) 55%, transparent);
+  mix-blend-mode: screen; opacity: 0; transition: opacity 1100ms var(--ease-mass); }
 .spill { width: calc(460 * var(--u)); height: calc(460 * var(--u)); top: calc(225 * var(--u)); border-radius: 50%;
   background: radial-gradient(closest-side, rgba(255, 180, 107, .17), rgba(255, 150, 80, .05) 55%, transparent);
   mix-blend-mode: screen; opacity: 0; transition: opacity 1400ms var(--ease-mass); }
@@ -344,11 +352,12 @@ body:has(#status[data-state="offline"]) .login-form { filter: saturate(.4) brigh
 body:has(#status[data-state="online"]) .rose .img { filter: brightness(.85) saturate(.9); }
 body:has(#status[data-state="online"]) .rose .glow { opacity: .6; }
 body:has(#status[data-state="online"]) .rose-bloom { opacity: 1; }
-/* Play is ready: the lantern-bearers' lanterns burn. */
+/* Play is ready: the votive candles at the priests' feet burn and warm the stone. */
 /* (In the login view, logged out: the tablet's submit is the Play that is ready.) */
-body:has(#play:enabled, .login-form:not([hidden]) .login-submit:enabled) .bearer .rest { opacity: 0; }
-body:has(#play:enabled, .login-form:not([hidden]) .login-submit:enabled) .bearer .lit { opacity: 1; }
-body:has(#play:enabled, .login-form:not([hidden]) .login-submit:enabled) .bearer .light { opacity: .56; }
+body:has(#play:enabled, .login-form:not([hidden]) .login-submit:enabled) .bearer .rest { filter: brightness(.78) sepia(.2) saturate(.9) contrast(1.02); }
+body:has(#play:enabled, .login-form:not([hidden]) .login-submit:enabled) .bearer .votive :is(.flame, .halo) { opacity: 1; }
+body:has(#play:enabled, .login-form:not([hidden]) .login-submit:enabled) .bearer .votive .flame { animation: flame 2.3s ease-in-out infinite; }
+body:has(#play:enabled, .login-form:not([hidden]) .login-submit:enabled) .bearer .light { opacity: .7; }
 body:has(#play:enabled, .login-form:not([hidden]) .login-submit:enabled) .spill { opacity: .9; }
 body:has(#play:enabled, .login-form:not([hidden]) .login-submit:enabled) .reliquary::after { opacity: 1; }
 body:has(#play:enabled, .login-form:not([hidden]) .login-submit:enabled) .bearer .flick { animation: flicker 3.7s steps(1, end) infinite; }
@@ -359,8 +368,10 @@ body:has(#play:enabled, .login-form:not([hidden]) .login-submit:enabled) .bearer
   58% { opacity: .96; filter: brightness(.98); } 66% { opacity: .94; filter: brightness(.97); } 73% { opacity: .99; filter: brightness(1.015); }
   85% { opacity: .965; filter: brightness(.99); } 93% { opacity: 1; filter: brightness(1.02); } }
 /* Danger — the shard is down, or the game sent back an error: the gargoyles wake. */
-body:has(#status[data-state="offline"]) .gargoyle .glow,
-body:has(#error:not([hidden]):not([data-kind="notice"])) .gargoyle .glow { opacity: 1; animation: ember 2.6s ease-in-out infinite; }
+body:has(#status[data-state="offline"]) .gargoyle .ember,
+body:has(#error:not([hidden]):not([data-kind="notice"])) .gargoyle .ember { animation: ember 2.6s ease-in-out infinite; }
+body:has(#status[data-state="offline"]) .gargoyle .body,
+body:has(#error:not([hidden]):not([data-kind="notice"])) .gargoyle .body { filter: brightness(.7) sepia(.3) saturate(1.2) hue-rotate(-12deg); }
 body:has(#status[data-state="offline"]) .gargoyle :is(.ember, .halo),
 body:has(#error:not([hidden]):not([data-kind="notice"])) .gargoyle :is(.ember, .halo) { opacity: 1; }
 @keyframes ember { 0%, 100% { filter: brightness(1.5) saturate(1.3); } 50% { filter: brightness(2) saturate(1.4); } }
