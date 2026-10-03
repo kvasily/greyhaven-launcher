@@ -72,9 +72,9 @@ html[data-front="login"] .news { min-height: 0; }
 .login-submit { height: 48px; margin-top: 4px; border: 1px solid var(--gold-hi); background: linear-gradient(180deg, #e2bf73, #b8924a); color: #1d170c; font: 700 16px/1 Georgia, serif; letter-spacing: .16em; text-transform: uppercase; cursor: pointer; box-shadow: 0 10px 30px #0008, inset 0 1px 0 #fff6; white-space: nowrap; }
 .login-submit:hover:not(:disabled) { background: linear-gradient(180deg, #f0cf85, #c9a257); }
 .login-submit:disabled { border-color: #ffffff22; background: #2a2e31; color: #a39d90; box-shadow: none; cursor: default; }
-.login-switch, .login-signout { align-self: center; min-height: 28px; padding: 2px 6px; border: 0; background: none; color: var(--muted); font-size: 13px; cursor: pointer; text-decoration: underline 1px #ffffff33; text-underline-offset: 3px; }
-.login-switch:hover, .login-signout:hover { color: var(--ink); text-decoration-color: var(--gold); }
-.play:focus-visible, .login-submit:focus-visible, .login-switch:focus-visible, .login-signout:focus-visible { outline: 2px solid var(--gold-hi); outline-offset: 2px; }
+.login-switch, .login-signout, .login-return { align-self: center; min-height: 28px; padding: 2px 6px; border: 0; background: none; color: var(--muted); font-size: 13px; cursor: pointer; text-decoration: underline 1px #ffffff33; text-underline-offset: 3px; }
+.login-switch:hover, .login-signout:hover, .login-return:hover { color: var(--ink); text-decoration-color: var(--gold); }
+.play:focus-visible, .login-submit:focus-visible, .login-switch:focus-visible, .login-signout:focus-visible, .login-return:focus-visible { outline: 2px solid var(--gold-hi); outline-offset: 2px; }
 .login-signed { display: flex; align-items: center; justify-content: flex-end; gap: 10px; color: var(--muted); font-size: 13px; }
 .login-account { margin: 0; }
 .login-account b { color: var(--ink); font-weight: 600; }

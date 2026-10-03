@@ -97,6 +97,7 @@
       <p class="login-error" role="alert" hidden></p>
       <button type="submit" class="login-submit">Log in</button>
       <button type="button" class="login-switch">New here? Make an account</button>
+      <button type="button" class="login-return" title="Back to the Play screen: the game asks for your login instead. The gear switches back.">Return</button>
     </form>
     <div class="login-signed" hidden>
       <p class="login-account">Logged in as <b></b></p>
@@ -139,6 +140,8 @@
       renderPlay(); showView()
       if (!play.disabled) play.focus()
     })
+    // Return: the Play screen instead (the gear's Front page: Play, kept for next time too).
+    q('.login-return').addEventListener('click', () => { if (api.front) void api.front('play') })
     swap.addEventListener('click', () => { mode = mode === 'register' ? 'login' : 'register'; fail(''); render(); name.focus() })
     q('.login-signout').addEventListener('click', async () => {
       try { await api.signout() } catch { /* forgotten here either way */ }

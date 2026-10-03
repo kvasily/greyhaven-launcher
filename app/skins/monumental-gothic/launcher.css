@@ -313,11 +313,11 @@ html[data-front="login"][data-auth="out"][data-play="shown"] .login { flex: 0 0 
   text-shadow: 0 -1px 0 rgba(0, 0, 0, .95), 0 1px 0 rgba(255, 232, 190, .08);
   filter: brightness(.82) saturate(.55) drop-shadow(0 calc(8 * var(--u)) calc(12 * var(--u)) rgba(0, 0, 0, .85)); }
 
-.login-switch, .login-signout { justify-self: center; min-height: 28px; padding: 2px 8px; border: 0; border-radius: 2px; background: none; cursor: pointer;
+.login-switch, .login-signout, .login-return { justify-self: center; min-height: 28px; padding: 2px 8px; border: 0; border-radius: 2px; background: none; cursor: pointer;
   color: var(--ink-muted); font: italic max(14px, calc(14.5 * var(--u)))/1.2 var(--f-text);
   text-decoration: underline 1px rgba(168, 138, 78, .5); text-underline-offset: 3px; text-shadow: 0 1px 2px #000; transition: color 300ms; }
-.login-switch:hover, .login-signout:hover { color: var(--ink); text-decoration-color: rgba(217, 164, 65, .8); }
-.login-switch:focus-visible, .login-signout:focus-visible { outline: 1px solid #f0dcb0; outline-offset: 1px; color: var(--ink); }
+.login-switch:hover, .login-signout:hover, .login-return:hover { color: var(--ink); text-decoration-color: rgba(217, 164, 65, .8); }
+.login-switch:focus-visible, .login-signout:focus-visible, .login-return:focus-visible { outline: 1px solid #f0dcb0; outline-offset: 1px; color: var(--ink); }
 
 /* logged in: one engraved line over the altar step */
 .login-signed { display: flex; align-items: center; gap: 0 12px; margin-bottom: calc(6 * var(--u));

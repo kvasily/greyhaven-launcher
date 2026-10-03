@@ -261,11 +261,21 @@ html[data-play="hidden"] body:has(.login-form[hidden]) .ribbon { filter: brightn
 }
 .login-switch:hover { color: var(--gilt); text-decoration-color: var(--gilt); }
 .login-switch:focus-visible { outline: 2px solid #ffe08f; outline-offset: 2px; border-radius: 3px; }
+/* Return (to the Play screen): on the lectern the other side of the tab */
+.login-return {
+  position: absolute; right: calc(50% + 139px); bottom: 31px; transform: translateY(50%); width: max-content;
+  padding: 3px 4px; border: 0; background: none; cursor: pointer; text-align: right;
+  font: italic 15px/1.25 var(--serif); color: #e2cc9c; text-shadow: 0 1px 2px #000, 0 0 8px #000;
+  text-decoration: underline 1px #e2cc9c66; text-underline-offset: 3px;
+}
+.login-return:hover { color: var(--gilt); text-decoration-color: var(--gilt); }
+.login-return:focus-visible { outline: 2px solid #ffe08f; outline-offset: 2px; border-radius: 3px; }
 
 /* a launcher update while logged out: Update takes the ribbon, so the whole entry stays on the page */
 html[data-front="login"][data-auth="out"][data-play="shown"] .login { bottom: 11.5%; }
 html[data-front="login"][data-auth="out"][data-play="shown"] .login-submit { margin-top: 4px; height: 52px; min-width: 210px; font-size: 18px; border-image-width: 0 50px; }
 html[data-front="login"][data-auth="out"][data-play="shown"] .login-switch { position: static; transform: none; align-self: center; max-width: none; color: var(--ink-soft); text-shadow: none; text-decoration-color: #4a342466; }
+html[data-front="login"][data-auth="out"][data-play="shown"] .login-return { position: static; transform: none; align-self: center; color: var(--ink-soft); text-shadow: none; text-decoration-color: #4a342466; }
 html[data-front="login"][data-auth="out"][data-play="shown"] .login-switch:hover { color: var(--rubric); text-decoration-color: var(--rubric); }
 
 /* logged in: a rubricated line at the foot of the page, above the ribbon */

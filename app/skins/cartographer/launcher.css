@@ -350,13 +350,13 @@ button { font: inherit; }
 /* not yet: the docket slip in faded ink, as Play */
 .login-submit:disabled { border-image-source: url(art/slip.png); color: var(--ink); text-shadow: none; letter-spacing: .14em; font-weight: 600; filter: drop-shadow(0 2px 2px #0008); cursor: default; }
 
-.login-switch, .login-signout {
+.login-switch, .login-signout, .login-return {
   align-self: center; min-height: 28px; padding: 2px 8px; border: 0; background: none; cursor: pointer;
   font: italic 14.5px/1.2 var(--serif); color: var(--ink-2);
   text-decoration: underline 1px #3a2c1e66; text-underline-offset: 3px;
 }
-.login-switch:hover { color: var(--red-ink); text-decoration-color: var(--red-ink); }
-.login-switch:focus-visible { outline: 2px dashed var(--red-ink); outline-offset: 1px; }
+.login-switch:hover, .login-return:hover { color: var(--red-ink); text-decoration-color: var(--red-ink); }
+.login-switch:focus-visible, .login-return:focus-visible { outline: 2px dashed var(--red-ink); outline-offset: 1px; }
 
 /* logged in: who you are, a scrap tucked above the wax */
 .login:has(> .login-signed:not([hidden])) { bottom: calc(var(--u) * 70 + max(50px, calc(var(--u) * 60)) + 6px); width: auto; }

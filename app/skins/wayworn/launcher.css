@@ -219,10 +219,10 @@ html[data-presence="low"] .brand.ui { opacity: .5; }
 .login-submit:disabled::after { opacity: 0; }
 
 /* the small words: Make an account / Switch account — chalk on the stone, underlined on approach */
-.login-switch, .login-signout { align-self: center; min-height: 28px; padding: 2px 6px; border: 0; background: none; cursor: pointer;
+.login-switch, .login-signout, .login-return { align-self: center; min-height: 28px; padding: 2px 6px; border: 0; background: none; cursor: pointer;
   font: italic 14px/1.2 var(--serif); color: var(--warm); text-decoration: underline dotted rgba(163, 157, 144, .45); text-underline-offset: 3px; transition: color 160ms ease; }
-.login-switch:hover, .login-signout:hover { color: var(--bone); text-decoration-color: rgba(207, 196, 168, .8); }
-.login-switch:focus-visible, .login-signout:focus-visible { outline: 1px solid rgba(232, 214, 176, .85); outline-offset: 1px; border-radius: 2px; color: var(--bone); }
+.login-switch:hover, .login-signout:hover, .login-return:hover { color: var(--bone); text-decoration-color: rgba(207, 196, 168, .8); }
+.login-switch:focus-visible, .login-signout:focus-visible, .login-return:focus-visible { outline: 1px solid rgba(232, 214, 176, .85); outline-offset: 1px; border-radius: 2px; color: var(--bone); }
 
 /* logged in: who you are, one quiet line above Play */
 .login-signed { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 2px 8px; padding: 0 4px;

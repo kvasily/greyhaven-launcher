@@ -211,10 +211,10 @@ html[data-front="login"] .action { flex-direction: column; align-items: center; 
 .login-submit[title=""]:disabled { border-image-source: url(art/button-normal.png); color: #cdb27c; animation: wait 2.4s ease-in-out infinite; }
 
 /* the small words: Make an account / Switch account */
-.login-switch, .login-signout { justify-self: center; min-height: 28px; padding: 2px 8px; border: 0; background: none; cursor: pointer;
+.login-switch, .login-signout, .login-return { justify-self: center; min-height: 28px; padding: 2px 8px; border: 0; background: none; cursor: pointer;
   font: italic 14.5px/1.2 var(--serif); color: #c4b796; text-shadow: 0 1px 2px #000; text-decoration: underline 1px #a8854a66; text-underline-offset: 4px; }
-.login-switch:hover, .login-signout:hover { color: var(--gold-hi); text-decoration-color: var(--gold-hi); }
-.login-switch:focus-visible, .login-signout:focus-visible { outline: 1px solid var(--gold-hi); outline-offset: 1px; border-radius: 2px; }
+.login-switch:hover, .login-signout:hover, .login-return:hover { color: var(--gold-hi); text-decoration-color: var(--gold-hi); }
+.login-switch:focus-visible, .login-signout:focus-visible, .login-return:focus-visible { outline: 1px solid var(--gold-hi); outline-offset: 1px; border-radius: 2px; }
 
 /* logged in: who you are, a line over the plate */
 .login-signed { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 0 10px; font-size: 15px; color: var(--ink-2); text-shadow: 0 1px 2px #000, 0 0 8px #000; }
