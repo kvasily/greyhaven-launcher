@@ -64,27 +64,30 @@ img { -webkit-user-drag: none; }
 .col-l { left: calc(14 * var(--u)); }
 .col-r { right: calc(14 * var(--u)); }
 .column span { position: absolute; left: 0; right: 0; }
-.column .cap { top: 0; height: calc(120 * var(--u)); background: url(art/column-capital.png) center / 100% 100% no-repeat; z-index: 1; }
+.column .cap { top: 0; height: calc(120 * var(--u)); background: url(art/column-capital.png) center / 100% 100% no-repeat; z-index: 1;
+  clip-path: inset(calc(13 * var(--u)) 0 0 0); }
 .column .shaft { top: calc(110 * var(--u)); bottom: calc(80 * var(--u)); left: calc(15 * var(--u)); right: calc(15 * var(--u));
   background: url(art/column-shaft.png) center top / calc(90 * var(--u)) calc(120 * var(--u)) repeat-y; }
 .column .base { bottom: 0; height: calc(90 * var(--u)); background: url(art/column-base.png) center bottom / 100% 100% no-repeat; }
 
 /* gargoyles: calm stone; their eyes kindle when the shard is down or something went wrong */
-.gargoyle { top: calc(8 * var(--u)); width: calc(240 * var(--u)); height: calc(240 * var(--u)); }
-.garg-l { left: calc(-46 * var(--u)); }
-.garg-r { right: calc(-46 * var(--u)); }
+/* The gargoyle's render brings its own abacus (the capital's top slab, with a moulded collar the
+   plinth seats into): it replaces the painted abacus, which .cap clips off, so the two read as one stone. */
+.gargoyle { top: calc(-62 * var(--u)); width: calc(324 * var(--u)); height: calc(324 * var(--u)); }
+.garg-l { left: calc(-88 * var(--u)); }
+.garg-r { right: calc(-88 * var(--u)); }
 .gargoyle .body { filter: brightness(.64) saturate(.8); transition: filter 900ms var(--ease-mass); }
 .garg-r .body { transform: scaleX(-1); }
-.gargoyle .ember { position: absolute; top: calc(22 * var(--u)); width: calc(64 * var(--u)); height: calc(40 * var(--u)); border-radius: 50%;
+.gargoyle .ember { position: absolute; top: calc(83.7 * var(--u)); width: calc(86 * var(--u)); height: calc(54 * var(--u)); border-radius: 50%;
   background: radial-gradient(closest-side, rgba(255, 80, 34, .6), rgba(160, 24, 12, .18) 60%, transparent);
   mix-blend-mode: screen; opacity: 0; transition: opacity 900ms var(--ease-mass); }
-.garg-l .ember { left: calc(90 * var(--u)); }
-.garg-r .ember { right: calc(90 * var(--u)); }
-.gargoyle .halo { position: absolute; top: calc(-43 * var(--u)); width: calc(200 * var(--u)); height: calc(170 * var(--u)); border-radius: 50%;
+.garg-l .ember { left: calc(122.4 * var(--u)); }
+.garg-r .ember { right: calc(122.4 * var(--u)); }
+.gargoyle .halo { position: absolute; top: calc(-4.3 * var(--u)); width: calc(270 * var(--u)); height: calc(230 * var(--u)); border-radius: 50%;
   background: radial-gradient(closest-side, rgba(255, 96, 40, .26), rgba(176, 50, 42, .12) 45%, rgba(107, 26, 22, .04) 70%, transparent);
   mix-blend-mode: plus-lighter; opacity: 0; transition: opacity 1100ms var(--ease-mass); }
-.garg-l .halo { left: calc(22 * var(--u)); }
-.garg-r .halo { right: calc(22 * var(--u)); }
+.garg-l .halo { left: calc(30.4 * var(--u)); }
+.garg-r .halo { right: calc(30.4 * var(--u)); }
 
 /* arch + rose window crowning the reliquary */
 .crest { left: calc(410 * var(--u)); top: calc(130 * var(--u)); width: calc(460 * var(--u)); height: calc(134 * var(--u)); }
