@@ -1,7 +1,7 @@
 {
   "name": "greyhaven-launcher",
   "productName": "Greyhaven",
-  "version": "1.0.9",
+  "version": "1.0.10",
   "description": "The Greyhaven launcher: news, shard status and Play; keeps itself up to date.",
   "author": "Greyhaven",
   "private": true,

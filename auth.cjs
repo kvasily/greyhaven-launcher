@@ -7,7 +7,7 @@
 // against a real shard.
 const ACCOUNT_NAME = /^[A-Za-z0-9_-]{3,16}$/ // (src/protocol.ts)
 const PASSWORD = { min: 8, max: 128 }
-const PROTOCOL = 1 // (src/protocol.ts PROTOCOL: tests/launcher-login.test.ts keeps them equal)
+const PROTOCOL = 2 // (src/protocol.ts PROTOCOL: tests/launcher-login.test.ts keeps them equal)
 
 const wsUrl = shard => String(shard).replace(/^http/i, 'ws').replace(/\/+$/, '')
 // What the form says before anything goes to the shard (the same rules as the game's login).
