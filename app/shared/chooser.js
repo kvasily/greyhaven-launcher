@@ -61,7 +61,9 @@
   function close(refocus) { if (!isOpen()) return; panel.hidden = true; gear.setAttribute('aria-expanded', 'false'); if (refocus) gear.focus() }
   gear.addEventListener('click', () => { if (isOpen()) close(true); else void open() })
   panel.addEventListener('click', async e => {
-    const v = e.target.closest('[data-front]')
+    // (Only the view buttons: the page itself says its view on <html data-front>, so a bare
+    // [data-front] matched every click in the list, and picking a design did nothing.)
+    const v = e.target.closest('.gh-chooser-view[data-front]')
     if (v) {
       const mode = v.dataset.front
       if (mode === state.front) return
