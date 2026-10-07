@@ -1,6 +1,6 @@
 /* Greyhaven launcher — Monumental Gothic skin.
-   A cathedral shrine at night: ornament carved into the edges, a clean reliquary of news in the
-   middle, Play as an engraved plaque on the altar step. The figures carry the state:
+   A cathedral shrine at night: ornament carved into the edges, a tall stained-glass window in the
+   middle (the rose in its head, two lancets below), Play as an engraved plaque on the altar step. The figures carry the state:
    rose window = the shard is up; the priests' votive candles = Play is ready; gargoyles' eyes = danger. */
 
 @font-face { font-family: "Lora GH"; src: url(fonts/Lora-Variable.ttf) format("truetype"); font-weight: 400 700; font-style: normal; }
@@ -128,8 +128,7 @@ img { -webkit-user-drag: none; }
 .candle.c3 { right: calc(354 * var(--u)); top: calc(160 * var(--u)); } .candle.c4 { right: calc(322 * var(--u)); }
 .candle img { position: absolute; inset: 0; width: 100%; height: 100%; }
 .candle .body { filter: brightness(.8); }
-.candle .flame { mix-blend-mode: screen; opacity: 0; transform-origin: 50% 30%;
-  animation: ignite 700ms var(--ease-mass) both, flame 2.3s ease-in-out 1.6s infinite; }
+.candle .flame { position: absolute; inset: 0; opacity: 0; animation: ignite 700ms var(--ease-mass) both; }
 .candle .halo { position: absolute; left: calc(-34 * var(--u)); top: calc(-32 * var(--u)); width: calc(104 * var(--u)); height: calc(104 * var(--u)); border-radius: 50%;
   background: radial-gradient(closest-side, rgba(255, 180, 107, .30), rgba(255, 140, 60, .08) 55%, transparent);
   mix-blend-mode: screen; opacity: 0; animation: ignite 900ms var(--ease-mass) both, halo 3.1s steps(1, end) 1.8s infinite; }
@@ -138,7 +137,6 @@ img { -webkit-user-drag: none; }
 .c3 .flame, .c3 .halo { animation-delay: 780ms, 1.7s; }
 .c4 .flame, .c4 .halo { animation-delay: 870ms, 2s; }
 @keyframes ignite { from { opacity: 0; } to { opacity: 1; } }
-@keyframes flame { 0%, 100% { transform: scale(1, 1); } 30% { transform: scale(.96, 1.05); } 55% { transform: scale(1.03, .97); } 80% { transform: scale(.98, 1.03); } }
 @keyframes halo { 0% { opacity: 1; } 23% { opacity: .94; } 41% { opacity: 1; } 67% { opacity: .93; } 84% { opacity: .98; } }
 
 /* ------------------------------------------------------------------ the shrine (content) */
@@ -359,7 +357,6 @@ body:has(#status[data-state="online"]) .rose-bloom { opacity: 1; }
 /* (In the login view, logged out: the tablet's submit is the Play that is ready.) */
 body:has(#play:enabled, .login-form:not([hidden]) .login-submit:enabled) .bearer .rest { filter: brightness(.78) sepia(.2) saturate(.9) contrast(1.02); }
 body:has(#play:enabled, .login-form:not([hidden]) .login-submit:enabled) .bearer .votive :is(.flame, .halo) { opacity: 1; }
-body:has(#play:enabled, .login-form:not([hidden]) .login-submit:enabled) .bearer .votive .flame { animation: flame 2.3s ease-in-out infinite; }
 body:has(#play:enabled, .login-form:not([hidden]) .login-submit:enabled) .bearer .light { opacity: .7; }
 body:has(#play:enabled, .login-form:not([hidden]) .login-submit:enabled) .spill { opacity: .9; }
 body:has(#play:enabled, .login-form:not([hidden]) .login-submit:enabled) .reliquary::after { opacity: 1; }
@@ -390,3 +387,85 @@ body:has(#status[data-state="offline"]) .news-list li.muted { padding: calc(150 
   *, *::before, *::after { animation-duration: 1ms !important; animation-iteration-count: 1 !important; animation-delay: 0ms !important; transition-duration: 1ms !important; }
   .smoke { animation: none !important; }
 }
+
+/* ------------------------------------------------------------------ the tall window (2026-10-06) */
+/* The news reliquary is gone: the window stands in its place, rising from under the tagline, with
+   the shard's status on its sill and any error under that. Its height is --win-h (units; it is half
+   as wide), from --win-top; the login view gives it less height so the tablet fits below, and less
+   again while making an account or showing an error. */
+:root { --win-top: 136; --win-h: 520; }
+html[data-front="login"] { --win-h: 380; }
+html[data-front="login"]:has(.login-confirm:not([hidden]), .login-error:not([hidden]), #error:not([hidden])) { --win-h: 316; }
+html[data-front="login"][data-auth="in"] { --win-h: 470; }
+.crest { top: calc(var(--win-top) * var(--u)); height: calc(var(--win-h) * var(--u)); width: calc(var(--win-h) / 2 * var(--u));
+  left: calc((640 - var(--win-h) / 4) * var(--u));
+  transition: height 700ms var(--ease-mass), width 700ms var(--ease-mass), left 700ms var(--ease-mass); }
+.rose { left: 0; top: 0; width: 100%; height: 100%; filter: drop-shadow(0 calc(10 * var(--u)) calc(16 * var(--u)) rgba(0, 0, 0, .8)); }
+/* the light thrown forward when it is lit: round the rose, and down the lancets */
+.rose-bloom { left: -40%; top: -6%; width: 180%; height: 112%; border-radius: 50%;
+  background: radial-gradient(ellipse 50% 32% at 50% 30%, rgba(200, 70, 60, .16), rgba(70, 90, 190, .07) 60%, transparent),
+              radial-gradient(ellipse 34% 30% at 50% 72%, rgba(70, 110, 230, .12), transparent 80%); }
+/* candles in pairs either side of the window's sill */
+.candle { top: calc((var(--win-top) + var(--win-h) - 104) * var(--u)); transition: top 700ms var(--ease-mass); }
+.candle.c1 { left: calc((640 - var(--win-h) / 4 - 78) * var(--u)); } .candle.c2 { left: calc((640 - var(--win-h) / 4 - 46) * var(--u)); top: calc((var(--win-top) + var(--win-h) - 96) * var(--u)); }
+.candle.c3 { right: calc((640 - var(--win-h) / 4 - 46) * var(--u)); top: calc((var(--win-top) + var(--win-h) - 96) * var(--u)); } .candle.c4 { right: calc((640 - var(--win-h) / 4 - 78) * var(--u)); }
+.candle.c1, .candle.c2, .candle.c3, .candle.c4 { transition: top 700ms var(--ease-mass), left 700ms var(--ease-mass), right 700ms var(--ease-mass); }
+
+/* the status on the sill, the error under it */
+.reliquary { position: absolute; left: 0; right: 0; width: auto; height: auto; top: calc((var(--win-top) + var(--win-h) - 30) * var(--u));
+  display: flex; flex-direction: column; align-items: center; gap: calc(6 * var(--u)); z-index: 2; transition: top 700ms var(--ease-mass); }
+.reliquary::before, .reliquary::after, .reliquary .frame { content: none; display: none; }
+.shard { position: relative; left: auto; bottom: auto; transform: none; }
+.error { margin: 0; padding: calc(4 * var(--u)) calc(14 * var(--u)) 0; max-width: calc(620 * var(--u)); border-top: 0; text-shadow: 0 1px 2px #000, 0 0 10px #000; }
+
+/* the login view: the window, its sill, then the tablet (smaller than before) and Play */
+html[data-front="login"] .shrine { display: flex; flex-direction: column; align-items: center; }
+html[data-front="login"] .reliquary { position: relative; left: auto; right: auto; top: auto; flex: none; min-height: 0; width: 100%;
+  margin-top: calc((var(--win-top) + var(--win-h) - 30) * var(--u)); transition: margin-top 700ms var(--ease-mass); }
+html[data-front="login"] .altar { margin: calc(10 * var(--u)) 0 calc(6 * var(--u)); }
+html[data-front="login"][data-auth="out"] .altar { margin-top: calc(32 * var(--u)); }
+.login-form { width: max(380px, calc(440 * var(--u))); gap: calc(5 * var(--u)) 12px; padding: calc(12 * var(--u)) calc(10 * var(--u)) calc(2 * var(--u));
+  border-width: calc(20 * var(--u)); border-image-width: calc(20 * var(--u)); }
+.login-title { top: calc(-20 * var(--u) - max(17px, calc(22 * var(--u)))); min-width: calc(190 * var(--u)); height: calc(40 * var(--u)); }
+.login-field input { height: max(34px, calc(36 * var(--u))); }
+.login-submit { min-width: calc(240 * var(--u)); height: max(40px, calc(50 * var(--u))); margin-top: calc(4 * var(--u)); }
+.login-switch { min-height: 24px; }
+@media (max-height: 680px) {
+  html[data-front="login"] { --win-h: 330; }
+  html[data-front="login"]:has(.login-confirm:not([hidden]), .login-error:not([hidden]), #error:not([hidden])) { --win-h: 280; }
+}
+
+/* a little light from the window (2026-10-06): a few soft, pale god rays slanting down from the
+   glass, breathing slowly, with a few motes in them. Behind the tablet; only when it is lit. */
+.crest .rays { position: absolute; left: -150%; width: 400%; top: -24%; height: 240%; pointer-events: none;
+  mix-blend-mode: screen; opacity: 0; transition: opacity 2400ms var(--ease-mass); }
+.crest .rays { background: url(art/window-rays.png) center / 100% 100% no-repeat; }
+@keyframes beams { 0%, 100% { opacity: .8; } 45% { opacity: 1; } 75% { opacity: .88; } }
+body:has(#status[data-state="online"]) .crest .rays { opacity: .85; animation: beams 13s ease-in-out 2.4s infinite; }
+@media (prefers-reduced-motion: reduce) { .crest .rays { animation: none !important; } }
+
+/* dust flowing in the window's light (2026-10-06): motes drawn by dust.js, carried on a slow soft
+   current. Behind the tablet, only in the soft region under the window (window-dust-mask.png), only
+   when it is lit. */
+.crest .dust-front { position: absolute; left: -150%; width: 400%; top: -24%; height: 240%; pointer-events: none; overflow: hidden;
+  -webkit-mask: url(art/window-dust-mask.png) center / 100% 100% no-repeat; mask: url(art/window-dust-mask.png) center / 100% 100% no-repeat;
+  opacity: 0; transition: opacity 2400ms var(--ease-mass); }
+.dust-front canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+body:has(#status[data-state="online"]) .crest .dust-front { opacity: .85; }
+
+/* the candle flames burn (2026-10-06): each flame is its tongue and the glow round it. The tongue
+   leans and sways from the wick, licks up and settles, now and then catches a draught; the glow
+   breathes with it. Every candle keeps its own time (--fd), so no two move together. */
+.flame img { position: absolute; inset: 0; width: 100%; height: 100%; mix-blend-mode: screen; }
+.flame .tongue { transform-origin: 50% 29%;
+  animation: flame-sway calc(3.7s * var(--fs, 1)) ease-in-out var(--fd, 0s) infinite,
+             flame-lick calc(1.15s * var(--fs, 1)) ease-in-out var(--fd, 0s) infinite,
+             flame-draught calc(9s * var(--fs, 1)) ease-in-out var(--fd, 0s) infinite; }
+.flame .flare { transform-origin: 50% 22%; animation: flame-breathe calc(2.6s * var(--fs, 1)) ease-in-out var(--fd, 0s) infinite; }
+.candle.c1 { --fd: -.4s; --fs: 1; } .candle.c2 { --fd: -2.1s; --fs: 1.13; } .candle.c3 { --fd: -1.2s; --fs: .92; } .candle.c4 { --fd: -3.3s; --fs: 1.07; }
+.bearer-l .votive { --fd: -.9s; --fs: .96; } .bearer-r .votive { --fd: -2.7s; --fs: 1.1; }
+@keyframes flame-sway { 0%, 100% { rotate: 0deg; } 18% { rotate: -2.4deg; } 37% { rotate: 1.2deg; } 52% { rotate: -.8deg; } 71% { rotate: 2.1deg; } 86% { rotate: -.6deg; } }
+@keyframes flame-lick { 0%, 100% { scale: 1 1; opacity: 1; } 22% { scale: .93 1.09; opacity: .95; } 48% { scale: 1.04 .95; opacity: 1; } 70% { scale: .96 1.05; opacity: .9; } 86% { scale: 1.02 .98; opacity: 1; } }
+@keyframes flame-draught { 0%, 58%, 100% { translate: 0 0; } 62% { translate: calc(1.2 * var(--u)) calc(-.6 * var(--u)); } 65% { translate: calc(-.7 * var(--u)) 0; } 68% { translate: calc(.5 * var(--u)) calc(-.3 * var(--u)); } 72% { translate: 0 0; } }
+@keyframes flame-breathe { 0%, 100% { opacity: .9; scale: 1; } 30% { opacity: 1; scale: 1.04; } 55% { opacity: .84; scale: .97; } 78% { opacity: .97; scale: 1.02; } }
+@media (prefers-reduced-motion: reduce) { .flame img { animation: none !important; } }

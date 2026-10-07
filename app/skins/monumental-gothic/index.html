@@ -17,7 +17,7 @@
   </div>
 
   <div class="stage">
-    <!-- Ornamental frame: columns, gargoyles, praying priests, arch and rose window, candles. -->
+    <!-- Ornamental frame: columns, gargoyles, praying priests, the tall window, candles. -->
     <div class="decor" aria-hidden="true">
       <div class="column col-l"><span class="cap"></span><span class="shaft"></span><span class="base"></span></div>
       <div class="column col-r"><span class="cap"></span><span class="shaft"></span><span class="base"></span></div>
@@ -35,13 +35,18 @@
         <span class="ember"></span>
       </div>
 
+      <!-- The tall window: the rose in its head, two lancets below (art/window-tall.png, from
+           make_window_tall.py + make_rose_ornate.py). Lit from behind when the shard is up. -->
       <div class="crest">
-        <div class="rose">
-          <img class="layer img" src="art/rose-window.png" alt="">
-          <img class="layer glow" src="art/rose-window-glow.png" alt="">
-        </div>
         <span class="rose-bloom"></span>
-        <img class="layer arch" src="art/arch-top.png" alt="">
+        <div class="rose">
+          <img class="layer img" src="art/window-tall.png" alt="">
+          <img class="layer glow" src="art/window-tall-glow.png" alt="">
+        </div>
+        <!-- a little light from the lit window: soft god rays (art/window-rays.png: make_window_rays.py) -->
+        <span class="rays"></span>
+        <!-- dust flowing softly in the light, behind the tablet (dust.js) -->
+        <span class="dust-front"><canvas></canvas></span>
       </div>
 
       <span class="spill spill-l"></span>
@@ -53,21 +58,21 @@
         <div class="flick">
           <video class="layer rest" src="art/priest-idle.webm" autoplay loop muted playsinline disablepictureinpicture></video>
           <span class="light"></span>
-          <span class="votive"><span class="halo"></span><img class="flame" src="art/candle-flame.png" alt=""></span>
+          <span class="votive"><span class="halo"></span><span class="flame"><img class="flare" src="art/candle-flame-glow.png" alt=""><img class="tongue" src="art/candle-flame-core.png" alt=""></span></span>
         </div>
       </div>
       <div class="bearer bearer-r">
         <div class="flick">
           <video class="layer rest" src="art/priest-idle.webm#t=3.4" autoplay loop muted playsinline disablepictureinpicture></video>
           <span class="light"></span>
-          <span class="votive"><span class="halo"></span><img class="flame" src="art/candle-flame.png" alt=""></span>
+          <span class="votive"><span class="halo"></span><span class="flame"><img class="flare" src="art/candle-flame-glow.png" alt=""><img class="tongue" src="art/candle-flame-core.png" alt=""></span></span>
         </div>
       </div>
 
-      <div class="candle c1"><img class="body" src="art/candle.png" alt=""><span class="halo"></span><img class="flame" src="art/candle-flame.png" alt=""></div>
-      <div class="candle c2"><img class="body" src="art/candle.png" alt=""><span class="halo"></span><img class="flame" src="art/candle-flame.png" alt=""></div>
-      <div class="candle c3"><img class="body" src="art/candle.png" alt=""><span class="halo"></span><img class="flame" src="art/candle-flame.png" alt=""></div>
-      <div class="candle c4"><img class="body" src="art/candle.png" alt=""><span class="halo"></span><img class="flame" src="art/candle-flame.png" alt=""></div>
+      <div class="candle c1"><img class="body" src="art/candle.png" alt=""><span class="halo"></span><span class="flame"><img class="flare" src="art/candle-flame-glow.png" alt=""><img class="tongue" src="art/candle-flame-core.png" alt=""></span></div>
+      <div class="candle c2"><img class="body" src="art/candle.png" alt=""><span class="halo"></span><span class="flame"><img class="flare" src="art/candle-flame-glow.png" alt=""><img class="tongue" src="art/candle-flame-core.png" alt=""></span></div>
+      <div class="candle c3"><img class="body" src="art/candle.png" alt=""><span class="halo"></span><span class="flame"><img class="flare" src="art/candle-flame-glow.png" alt=""><img class="tongue" src="art/candle-flame-core.png" alt=""></span></div>
+      <div class="candle c4"><img class="body" src="art/candle.png" alt=""><span class="halo"></span><span class="flame"><img class="flare" src="art/candle-flame-glow.png" alt=""><img class="tongue" src="art/candle-flame-core.png" alt=""></span></div>
     </div>
 
     <main class="shrine">
@@ -76,18 +81,14 @@
         <p class="tagline">One world. Every road leads somewhere worth going.</p>
       </header>
 
+      <!-- Under the window: the shard's status on the sill, and any error or notice. (The news is
+           no longer shown in this design; launcher.js still fills the hidden list.) -->
       <div class="reliquary">
-        <span class="frame" aria-hidden="true"></span>
-        <section class="news" aria-labelledby="news-title">
-          <h2 id="news-title" class="cartouche title"><span>Tidings</span></h2>
-          <div class="news-scroll">
-            <ol id="news" class="news-list"><li class="muted">Asking the shard…</li></ol>
-          </div>
-          <p id="error" class="error" role="alert" hidden></p>
-        </section>
+        <ol id="news" class="news-list" hidden><li class="muted">Asking the shard…</li></ol>
         <div class="shard cartouche">
           <div id="status" class="status" data-state="checking"><span class="dot"></span><span id="status-text">Looking for the shard…</span></div>
         </div>
+        <p id="error" class="error" role="alert" hidden></p>
       </div>
 
       <footer class="altar">
@@ -96,10 +97,13 @@
         <span id="version" class="version"></span>
       </footer>
     </main>
+
+    <!-- the same beams again in front of the shrine, faint, so the light falls across the tablet too -->
   </div>
 
   <script src="mock.js"></script>
   <script src="launcher.js"></script>
+  <script src="dust.js"></script>
   <script src="../../shared/chooser.js"></script>
 </body>
 </html>
